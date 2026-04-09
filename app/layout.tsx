@@ -1,6 +1,12 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono, Figtree } from 'next/font/google';
+import './globals.css';
+import QueryProvider from '@/providers/query-provider';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import { cn } from "@/lib/utils";
+
+const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +31,28 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn(geistSans.variable, geistMono.variable, "font-sans", figtree.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="antialiased h-screen overflow-hidden">
+        <div className="flex h-screen"> 
+          <aside className="p-4 w-1/6 border-r"> 
+            <Sidebar /> 
+          </aside> 
+          <div className="flex flex-col flex-1"> 
+            <div className="h-25 shrink-0 border-b bg-white"> 
+              <Header /> 
+            </div> 
+            <main className="flex-1 overflow-hidden"> 
+              <QueryProvider> 
+                <div className="px-2 pt-2 h-full overflow-auto"> 
+                  {children} 
+                  {/* <Toaster /> */} 
+                </div> 
+              </QueryProvider> 
+            </main> 
+          </div> 
+        </div>
+      </body>
     </html>
   );
 }
