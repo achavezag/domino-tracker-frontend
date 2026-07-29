@@ -8,7 +8,7 @@ export default function HeaderImage() {
         alt="header"
         loading="eager"
         fill
-        style={{ objectFit: "cover" }}
+        style={{ objectFit: "fill" }}
       />
     </div>
   )

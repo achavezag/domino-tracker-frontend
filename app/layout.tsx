@@ -5,6 +5,7 @@ import QueryProvider from '@/providers/query-provider';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import { cn } from "@/lib/utils";
+import { Toaster } from 'sonner';
 
 const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
@@ -46,7 +47,7 @@ export default function RootLayout({
               <QueryProvider> 
                 <div className="px-2 pt-2 h-full overflow-auto"> 
                   {children} 
-                  {/* <Toaster /> */} 
+                  <Toaster position="bottom-right" richColors/> 
                 </div> 
               </QueryProvider> 
             </main> 

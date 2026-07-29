@@ -46,6 +46,18 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --color-custom-border: var(--custom-border);
+  --color-custom-hover: var(--custom-hover);
+  --color-custom-played: var(--custom-played);
+  --color-custom-win: var(--custom-win);
+  --color-custom-lose: var(--custom-lose);
+  --color-custom-avg: var(--custom-avg);
+  --color-custom-nick: var(--custom-nick);
+  --color-custom-separator: var(--custom-separator);
+  --color-custom-date: var(--custom-date);
+  --color-custom-fixed: var(--custom-fixed);
+  --color-custom-rotating: var(--custom-rotating);
 }
 
 :root {
@@ -81,6 +93,49 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+   /* 🔵 BLUE */
+  --custom-hover: oklch(0.92 0.05 250);
+  --custom-border: oklch(0.75 0.12 250);
+  --custom-blue-500: oklch(0.6 0.18 250);
+  --custom-avg: oklch(0.45 0.2 250);
+  --custom-fixed: oklch(40% 0.2 295);
+
+  /* 🟢 GREEN */
+  --custom-green-100: oklch(0.92 0.05 145);
+  --custom-green-300: oklch(0.75 0.12 145);
+  --custom-win: oklch(0.6 0.18 145);
+  --custom-green-700: oklch(0.45 0.2 145);
+
+  /* 🔴 RED */
+  --custom-red-100: oklch(0.92 0.05 25);
+  --custom-red-300: oklch(0.75 0.12 25);
+  --custom-lose: oklch(0.6 0.2 25);
+  --custom-red-700: oklch(0.45 0.22 25);
+
+  /* 🟠 ORANGE */
+  --custom-orange-100: oklch(0.92 0.05 60);
+  --custom-orange-300: oklch(0.75 0.12 60);
+  --custom-orange-500: oklch(0.65 0.18 60);
+  --custom-date: oklch(0.5 0.2 60);
+
+  /* 🟡 YELLOW */
+  --custom-yellow-100: oklch(0.95 0.04 100);
+  --custom-yellow-300: oklch(0.85 0.1 100);
+  --custom-rotating: oklch(0.75 0.15 100);
+  --custom-yellow-700: oklch(0.6 0.18 100);
+
+  /* 🟤 BROWN (carmelita) */
+  --custom-brown-100: oklch(0.9 0.03 70);
+  --custom-brown-300: oklch(0.75 0.08 70);
+  --custom-brown-500: oklch(0.6 0.12 70);
+  --custom-played: oklch(0.45 0.14 70);
+
+  /* GRIS */
+  --custom-gray-100: oklch(0.95 0 0);
+  --custom-gray-300: oklch(0.82 0 0);
+  --custom-separator: oklch(0.60 0 0);
+  --custom-nick: oklch(0.40 0 0);
 }
 
 .dark {
