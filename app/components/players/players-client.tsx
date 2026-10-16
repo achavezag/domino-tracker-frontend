@@ -7,33 +7,35 @@ import PlayerCard from './player-card';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { LoadingState } from '@/components/ui/spinner';
+import { useSeasonStore } from '@/lib/store/season-store';
 
 export default function PlayersClient() {
   const [mode, setMode] = useState<"all" | "headtohead">("all");
 
   const [player1Id, setPlayer1Id] = useState<string>("");
   const [player2Id, setPlayer2Id] = useState<string>("");
-  
+
+  const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
+
   const { data: players = [], isLoading: playersLoading } = useQuery<Player[]>({
     queryKey: ["players"],
     queryFn: getPlayers,
   });
 
   const { data: playerStats = [], isLoading: playerStatsLoading } = useQuery<PlayerStats[]>({
-    queryKey: ["players-stats"],
-    queryFn: getPlayersStats,
+    queryKey: ["players-stats", selectedSeasonIds],
+    queryFn: () => getPlayersStats(selectedSeasonIds),
   });
 
-  const { data: headToHead, error } = useQuery<HeadToHeadStats>({
-    queryKey: ["headtohead", player1Id, player2Id],
-    queryFn: () => getHeadToHead(player1Id, player2Id),
+  const { data: headToHead, isFetching: headToHeadLoading } = useQuery<HeadToHeadStats>({
+    queryKey: ["headtohead", player1Id, player2Id, selectedSeasonIds],
+    queryFn: () => getHeadToHead(player1Id, player2Id, selectedSeasonIds),
     enabled:
       !!player1Id &&
       !!player2Id &&
       player1Id !== player2Id,
     });
-    console.log(headToHead);
-    console.log(error);
 
   const selectedPlayer1 = players.find(
     (p) => p.id === player1Id
@@ -60,8 +62,17 @@ export default function PlayersClient() {
     setPlayer2Id("");
   };
 
+  const sortedPlayers = [...players]
+    .filter((p) => (statsMap.get(p.id)?.matchesPlayed ?? 0) > 0)
+    .sort((a, b) => {
+      const statsA = statsMap.get(a.id);
+      const statsB = statsMap.get(b.id);
+
+      return (statsB?.winRate ?? 0) - (statsA?.winRate ?? 0);
+    });
+
   if (playersLoading || playerStatsLoading) {
-    return <span>Cargando...</span>;
+    return <LoadingState />;
   }
 
   return (
@@ -154,8 +165,8 @@ export default function PlayersClient() {
       </div>  
 
       {mode === "all" && (
-        <div className='grid grid-cols-5 gap-6 pr-2 pb-2'>
-          {players.map((player) => {
+        <div className='grid lg:grid-cols-4 md:grid-cols-3 gap-6 pr-2 pb-2'>
+          {sortedPlayers.map((player) => {
             const stats = statsMap.get(player.id);
             return (
               <PlayerCard
@@ -183,7 +194,9 @@ export default function PlayersClient() {
 
           {/* CENTER */}
           <div className="w-[320px]">
-            {headToHead && (
+            {headToHeadLoading && <LoadingState />}
+
+            {!headToHeadLoading && headToHead && (
               <div className="border border-ring rounded-xl px-6 py-4 w-full bg-card">
 
                 <h2 className="text-center font-bold text-lg mb-2">

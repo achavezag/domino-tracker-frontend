@@ -6,7 +6,7 @@ export default async function MatchesPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["matches", {}],
+    queryKey: ["matches", {}, []],
     queryFn: () => getMatches({}),
   });
 

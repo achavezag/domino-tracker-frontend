@@ -11,8 +11,8 @@ export default async function TeamsPage() {
   });
 
   await queryClient.prefetchQuery({
-    queryKey: ["teams-stats"],
-    queryFn: getTeamsStats,
+    queryKey: ["teams-stats", []],
+    queryFn: () => getTeamsStats(),
   });
 
   return (

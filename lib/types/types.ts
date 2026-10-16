@@ -8,6 +8,7 @@ export type Team = {
   id: string;
   player1: Player;
   player2: Player;
+  seasonsPlayed: number[];
 };
 
 export type MatchDetail = {
@@ -32,6 +33,7 @@ export type CreateMatchRequest = {
   type: MatchType;
   teamAScore: number;
   teamBScore: number;
+  date: string;
 };
 
 export type PlayerStats = {
@@ -69,17 +71,21 @@ export type CreateTeamRequest = {
 export type TeamStats = {
   teamId: string;
   player1Id: string;
-  player1Name: string;
+  player1Nickname: string;
   player2Id: string;
-  player2Name: string;
+  player2Nickname: string;
   matchesPlayed: number;
   wins: number;
   losses: number;
   winRate: number;
   fixedMatches: number;
   fixedWins: number;
-  fixedLosses: number;  
+  fixedLosses: number;
+  fixedMatchesWinRate: number;  
   rotatingMatches: number;
+  rotatingWins: number;
+  rotatingLosses: number;
+  rotatingMatchesWinRate: number;
   warsPlayed: number;
   warWins: number;
   warLosses: number;
@@ -95,7 +101,6 @@ export type MatchListItem = {
   winningTeamId: string;
   status: string;
   type: string;
-  createdAt: string;
   finishedAt?: string;
 };
 
@@ -105,6 +110,23 @@ export type MatchFilters = {
   type?: MatchType;
   teamAId?: string;
   teamBId?: string;
+  seasonIds?: number[];
+};
+
+export type Season = {
+  id: number;
+  startDate: string;
+  endDate: string | null;
+};
+
+export type CreateSeasonRequest = {
+  startDate: string;
+  endDate: string | null;
+};
+
+export type UpdateSeasonRequest = {
+  startDate: string;
+  endDate: string | null;
 };
 
 export type WarListItem = {

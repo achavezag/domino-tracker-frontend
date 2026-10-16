@@ -30,15 +30,14 @@ export default function PlayerCard({ player, stats }: Props) {
     <Card className="w-60 border border-ring">
       <CardContent className="px-2 flex flex-col gap-4 items-center">
         {/* Avatar */}
-        <Avatar className="h-32 w-32 overflow-hidden">
+        <Avatar className="relative h-32 w-32 overflow-hidden rounded-full">
           {!imgError && (
             <Image
               src={getPlayerAvatar(player.nickname)}
               alt={player.name}
-              width={128}
-              height={128}
+              fill
               unoptimized
-              className="object-cover w-full h-full"
+              className="object-cover"
               onError={() => setImgError(true)}
             />
           )}

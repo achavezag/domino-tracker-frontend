@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useSeasonStore } from '@/lib/store/season-store';
+import { LoadingState } from '@/components/ui/spinner';
 
 type Filters = {
   opponentTeamId?: string;
@@ -33,26 +35,29 @@ export default function TeamsClient() {
     fromDate: undefined,
     toDate: undefined
   });
-  
+
+  const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
+
   const { data: teams = [], isLoading: teamsLoading } = useQuery<Team[]>({
     queryKey: ["teams"],
     queryFn: getTeams,
   });
 
   const { data: teamStats = [], isLoading: statsLoading } = useQuery<TeamStats[]>({
-    queryKey: ["teams-stats"],
-    queryFn: getTeamsStats,
+    queryKey: ["teams-stats", selectedSeasonIds],
+    queryFn: () => getTeamsStats(selectedSeasonIds),
   });
 
   const { data: matches = [], isLoading: matchesLoading } = useQuery({
-    queryKey: ["matches", selectedTeamId, filters],
+    queryKey: ["matches", selectedTeamId, filters, selectedSeasonIds],
     queryFn: () =>
       getMatches({
         teamAId: selectedTeamId,
         teamBId: filters.opponentTeamId,
         type: filters.type,
         fromDate: filters.fromDate,
-        toDate: filters.toDate
+        toDate: filters.toDate,
+        seasonIds: selectedSeasonIds,
       }),
     enabled: !!selectedTeamId,
   });
@@ -60,6 +65,13 @@ export default function TeamsClient() {
   const statsMap = new Map(
     teamStats.map((s) => [s.teamId, s])
   );
+
+  const visibleTeams = [...teams]
+    .filter((team) => (statsMap.get(team.id)?.matchesPlayed ?? 0) > 0)
+    .sort(
+      (a, b) =>
+        (statsMap.get(b.id)?.winRate ?? 0) - (statsMap.get(a.id)?.winRate ?? 0)
+    );
 
    const selectedTeam = teams.find(t => t.id === selectedTeamId);
 
@@ -78,7 +90,7 @@ export default function TeamsClient() {
     : lossesA;
 
   if (teamsLoading || statsLoading) {
-    return <span>Cargando...</span>;
+    return <LoadingState />;
   }
 
   return (
@@ -86,7 +98,7 @@ export default function TeamsClient() {
       <div className="grid grid-cols-4 gap-4">
 
         {/* TEAMS */}
-        {teams
+        {visibleTeams
           .filter((team) =>
             selectedTeamId ? team.id === selectedTeamId : true
           )
@@ -259,7 +271,7 @@ export default function TeamsClient() {
 
           {/* MATCHES */}
           {matchesLoading ? (
-            <span>Cargando partidos...</span>
+            <LoadingState label="Cargando partidos..." />
           ) : matches.length === 0 ? (
             <span>No hay partidos</span>
           ) : (

@@ -4,14 +4,18 @@ import { useQuery } from '@tanstack/react-query';
 import { getWars } from '@/lib/api/api';
 import { WarListItem } from '@/lib/types/types';
 import WarItem from './war-item';
+import { useSeasonStore } from '@/lib/store/season-store';
+import { LoadingState } from '@/components/ui/spinner';
 
 export default function WarsClient() {
+  const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
+
   const { data: wars = [], isLoading } = useQuery<WarListItem[]>({
-    queryKey: ["wars"],
-    queryFn: getWars,
+    queryKey: ["wars", selectedSeasonIds],
+    queryFn: () => getWars(selectedSeasonIds),
   });
 
-  if (isLoading) return <span>Cargando...</span>;
+  if (isLoading) return <LoadingState />;
 
   return (
     <div className="flex flex-col gap-4">

@@ -8,15 +8,19 @@ import { MatchFilters } from '@/lib/types/types';
 import MatchesFilters from './matches-filters';
 import { toast } from 'sonner';
 import { CheckSquare, Plus, Save, Square } from 'lucide-react';
+import { useSeasonStore } from '@/lib/store/season-store';
+import { LoadingState, Spinner } from '@/components/ui/spinner';
 
 export default function MatchesClient() {
   const [filters, setFilters] = useState<MatchFilters>({});
   const [selectionMode, setSelectionMode] = useState<boolean>(false);
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
 
+  const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
+
   const { data: matches = [], isLoading } = useQuery({
-    queryKey: ["matches", filters],
-    queryFn: () => getMatches(filters),
+    queryKey: ["matches", filters, selectedSeasonIds],
+    queryFn: () => getMatches({ ...filters, seasonIds: selectedSeasonIds }),
     staleTime: 1000 * 60 * 5,
   });
 
@@ -77,7 +81,7 @@ export default function MatchesClient() {
 
   const visibleMatches = selectionMode ? fixedMatches : matches;
 
-  if (isLoading) return <span>Cargando...</span>;
+  if (isLoading) return <LoadingState />;
 
   return (
     <>
@@ -129,7 +133,11 @@ export default function MatchesClient() {
             disabled={selectedMatches.length === 0 || createWarMutation.isPending}
             className="h-14 w-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center hover:scale-105 transition disabled:opacity-50"
           >
-            <Save className="w-6 h-6" />
+            {createWarMutation.isPending ? (
+              <Spinner className="size-6" />
+            ) : (
+              <Save className="w-6 h-6" />
+            )}
           </button>
         )}
 

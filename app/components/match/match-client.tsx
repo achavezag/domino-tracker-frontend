@@ -8,6 +8,8 @@ import { MatchDetail, MatchHistoryItem, MatchType, Team } from '@/lib/types/type
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { formatDate, toDateInputValue } from '@/lib/helpers';
+import { LoadingState, Spinner } from '@/components/ui/spinner';
 
 export default function MatchClient() {
   const router = useRouter();
@@ -23,13 +25,14 @@ export default function MatchClient() {
   );
 
   const type = (searchParams.get("type") as MatchType) || "Fixed";
+  const date = searchParams.get("date") || toDateInputValue(new Date());
 
   const [pointsA, setPointsA] = useState<string>("");
   const [pointsB, setPointsB] = useState<string>("");
 
   const [createdMatch, setCreatedMatch] = useState<MatchDetail | null>(null);
 
-  const { data: history = [] } = useQuery<MatchHistoryItem[]>({
+  const { data: history = [], isLoading: historyLoading } = useQuery<MatchHistoryItem[]>({
     queryKey: ["match-history", teamA.id, teamB.id, type],
     queryFn: () => getMatchHistory(teamA.id, teamB.id, type),
     enabled: !!teamA.id && !!teamB.id,
@@ -97,6 +100,16 @@ export default function MatchClient() {
     ])
   );
 
+  const handleNextMatch = async () => {
+    setCreatedMatch(null);
+    setPointsA("");
+    setPointsB("");
+
+    await queryClient.invalidateQueries({
+      queryKey: ["match-history", teamA.id, teamB.id],
+    });
+  };
+
   const handleSaveWar = () => {
     saveWarMutation.mutate(allMatchIds);
   };
@@ -115,6 +128,11 @@ export default function MatchClient() {
 
   return (
     <div className="p-4 flex flex-col gap-2 max-w-xl">
+
+      {/* DATE */}
+      <div className="text-xs text-muted-foreground">
+        {formatDate(date)}
+      </div>
 
       {/* HEADER */}
       <div className="flex justify-between items-center text-lg font-bold border-b pb-2">
@@ -136,7 +154,9 @@ export default function MatchClient() {
       </div>
 
       {/* DAY HISTORY */}
-      {history.length > 0 && (
+      {historyLoading && <LoadingState label="Cargando historial..." />}
+
+      {!historyLoading && history.length > 0 && (
         <div className="border rounded p-2 text-sm bg-muted/30">
 
           {(() => {
@@ -229,8 +249,8 @@ export default function MatchClient() {
 
           {/* BUTTON */}
           <Button
-            className="h-8 flex items-center justify-center ml-4"
-            disabled={!pointsA || !pointsB}
+            className="h-8 flex items-center justify-center gap-1.5 ml-4"
+            disabled={!pointsA || !pointsB || createMatchMutation.isPending}
             onClick={() => {
               createMatchMutation.mutate({
                 teamAId: teamA.id,
@@ -238,9 +258,11 @@ export default function MatchClient() {
                 type,
                 teamAScore: Number(pointsA),
                 teamBScore: Number(pointsB),
+                date,
               });
             }}
           >
+            {createMatchMutation.isPending && <Spinner />}
             Guardar
           </Button>
 
@@ -253,32 +275,39 @@ export default function MatchClient() {
           {type === "Fixed" ? (
             <Button
               className="mt-4"
-              onClick={async () => {
-                setCreatedMatch(null);
-                await queryClient.invalidateQueries({
-                  queryKey: ["match-history", teamA.id, teamB.id],
-                });
-              }}
+              onClick={handleNextMatch}
             >
               Siguiente partido
             </Button>
           ) : (
-             <Button
-              className="mt-4"
-              onClick={() => {
-                router.push("/play");
-              }}
-            >
-              Nuevo enfrentamiento
-            </Button>  
+            <>
+              <Button
+                className="mt-4"
+                onClick={handleNextMatch}
+              >
+                ReMatch (mismas parejas)
+              </Button>
+
+              <Button
+                variant="outline"
+                className="mt-2"
+                onClick={() => {
+                  router.push("/play");
+                }}
+              >
+                Nuevo enfrentamiento
+              </Button>
+            </>  
           )}
+          
           {type === "Fixed" && (
             <Button
               variant="outline"
-              className="mt-2"
+              className="mt-2 gap-1.5"
               onClick={handleSaveWar}
               disabled={saveWarMutation.isPending || !canSaveWar}
             >
+              {saveWarMutation.isPending && <Spinner />}
               {saveWarMutation.isPending
                 ? "Guardando..."
                 : "Guardar guerra"}

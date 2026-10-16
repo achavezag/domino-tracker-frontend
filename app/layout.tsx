@@ -35,24 +35,24 @@ export default function RootLayout({
       className={cn(geistSans.variable, geistMono.variable, "font-sans", figtree.variable)}
     >
       <body className="antialiased h-screen overflow-hidden">
-        <div className="flex h-screen"> 
-          <aside className="p-4 w-1/6 border-r"> 
-            <Sidebar /> 
-          </aside> 
-          <div className="flex flex-col flex-1"> 
-            <div className="h-25 shrink-0 border-b bg-white"> 
-              <Header /> 
-            </div> 
-            <main className="flex-1 overflow-hidden"> 
-              <QueryProvider> 
-                <div className="px-2 pt-2 h-full overflow-auto"> 
-                  {children} 
-                  <Toaster position="bottom-right" richColors/> 
-                </div> 
-              </QueryProvider> 
-            </main> 
-          </div> 
-        </div>
+        <QueryProvider>
+          <div className="flex h-screen">
+            <aside className="p-4 w-1/6 border-r">
+              <Sidebar />
+            </aside>
+            <div className="flex flex-col flex-1">
+              <div className="h-25 shrink-0 border-b bg-white">
+                <Header />
+              </div>
+              <main className="flex-1 overflow-hidden">
+                <div className="px-2 pt-2 h-full overflow-auto">
+                  {children}
+                  <Toaster position="bottom-right" richColors/>
+                </div>
+              </main>
+            </div>
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );

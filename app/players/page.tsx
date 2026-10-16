@@ -11,8 +11,8 @@ export default async function PlayersPage() {
   });
 
   await queryClient.prefetchQuery({
-    queryKey: ["players-stats"],
-    queryFn: getPlayersStats,
+    queryKey: ["players-stats", []],
+    queryFn: () => getPlayersStats(),
   });
 
   return (

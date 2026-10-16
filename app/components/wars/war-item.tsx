@@ -6,6 +6,7 @@ import { getWarById } from '@/lib/api/api';
 import { WarListItem, WarDetail } from '@/lib/types/types';
 import { formatDate } from '@/lib/helpers';
 import WarMatchRow from './war-match-row';
+import { LoadingState } from '@/components/ui/spinner';
 
 export default function WarItem({ war }: { war: WarListItem }) {
   const [open, setOpen] = useState(false);
@@ -40,7 +41,7 @@ export default function WarItem({ war }: { war: WarListItem }) {
         <div className="p-3 flex flex-col gap-2">
 
           {isLoading ? (
-            <span>Cargando...</span>
+            <LoadingState />
           ) : data?.matches.length === 0 ? (
             <span>No hay partidos</span>
           ) : (

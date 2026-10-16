@@ -3,123 +3,49 @@
 import { useQuery } from '@tanstack/react-query';
 import { getPlayersStats } from '@/lib/api/api';
 import { PlayerStats } from '@/lib/types/types';
-import { formatAverage } from '@/lib/helpers';
+import { useSeasonStore } from '@/lib/store/season-store';
+import { LoadingState } from '@/components/ui/spinner';
+import RankingTable, { RankingRow } from './ranking-table';
+
+function toRankingRow(player: PlayerStats): RankingRow {
+  return {
+    id: player.playerId,
+    name: player.nickname,
+    matchesPlayed: player.matchesPlayed,
+    wins: player.wins,
+    losses: player.losses,
+    winRate: player.winRate,
+    warsPlayed: player.warsPlayed,
+    warWins: player.warWins,
+    warDraws: player.warsPlayed - player.warWins - player.warLosses,
+    warLosses: player.warLosses,
+    warWinRate: player.warWinRate,
+    fixedMatches: player.fixedMatches,
+    fixedWins: player.fixedWins,
+    fixedLosses: player.fixedLosses,
+    fixedMatchesWinRate: player.fixedMatchesWinRate,
+    rotatingMatches: player.rotatingMatches,
+    rotatingWins: player.rotatingWins,
+    rotatingLosses: player.rotatingLosses,
+    rotatingMatchesWinRate: player.rotatingMatchesWinRate,
+  };
+}
 
 export default function PlayersRankingTable() {
+  const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
+
   const { data = [], isLoading } = useQuery<PlayerStats[]>({
-    queryKey: ["players-stats"],
-    queryFn: getPlayersStats,
+    queryKey: ["players-stats", selectedSeasonIds],
+    queryFn: () => getPlayersStats(selectedSeasonIds),
   });
 
   if (isLoading) {
-    return <span>Cargando...</span>;
+    return <LoadingState />;
   }
 
-  const rows = [...data]
-    .sort((a, b) => b.winRate - a.winRate);
+  const rows = data
+    .filter((p) => p.matchesPlayed > 0)
+    .map(toRankingRow);
 
-  return (
-    <div className="border rounded-xl overflow-hidden">
-
-      <table className="w-full text-sm">
-
-        <thead className="bg-muted">
-          <tr className="text-left">
-
-            <th className="px-3 py-2">Jugador</th>
-
-            <th className="px-3 py-2 text-center">AVG</th>
-
-            <th className="px-3 py-2 text-center">PJ</th>
-            <th className="px-3 py-2 text-center">PG</th>
-            <th className="px-3 py-2 text-center">PP</th>
-
-            <th className="px-3 py-2 text-center">GJ</th>
-            <th className="px-3 py-2 text-center">GG</th>
-            <th className="px-3 py-2 text-center">GE</th>
-            <th className="px-3 py-2 text-center">GP</th>
-
-            <th className="px-3 py-2 text-center">G_AVG</th>
-
-            <th className="px-3 py-2 text-center">PGJ</th>
-            <th className="px-3 py-2 text-center">PGG</th>
-            <th className="px-3 py-2 text-center">PGP</th>
-
-          </tr>
-        </thead>
-
-        <tbody>
-          {rows.map((player) => {
-
-            const warDraws =
-              player.warsPlayed -
-              player.warWins -
-              player.warLosses;
-
-            return (
-              <tr
-                key={player.playerId}
-                className="border-t"
-              >
-                <td className="px-3 py-2 font-medium">
-                  {player.nickname}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {formatAverage(player.winRate)}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.matchesPlayed}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.wins}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.losses}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.warsPlayed}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.warWins}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {warDraws}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.warLosses}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {formatAverage(player.warWinRate)}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.fixedMatches}
-                </td>
-
-                <td className="px-3 py-2 text-center">
-                  {player.fixedWins}
-                </td>
-                
-                <td className="px-3 py-2 text-center">
-                  {player.fixedLosses}
-                </td>
-
-              </tr>
-            );
-          })}
-        </tbody>
-
-      </table>
-
-    </div>
-  );
+  return <RankingTable rows={rows} nameLabel="Jugador" />;
 }

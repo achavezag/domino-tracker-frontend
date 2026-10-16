@@ -2,21 +2,22 @@
 
 import { useState } from 'react';
 import PlayersRankingTable from './players-ranking-table';
+import TeamsRankingTable from './teams-ranking-table';
 
 export default function HomeClient() {
   const [tab, setTab] = useState<"players" | "teams">("players");
 
   return (
-    <div className="w-full max-w-7xl p-6">
+    <div className="w-full max-w-11/12 p-6">
 
       {/* TABS */}
       <div className="flex gap-2 mb-6">
 
         <button
-          className={`px-4 py-2 rounded-lg border ${
+          className={`w-32 px-4 py-2 rounded-lg border ${
             tab === "players"
-              ? "bg-primary text-primary-foreground"
-              : ""
+              ? "bg-custom-hover text-foreground font-semibold text-sm"
+              : "text-muted-foreground text-sm"
           }`}
           onClick={() => setTab("players")}
         >
@@ -24,10 +25,10 @@ export default function HomeClient() {
         </button>
 
         <button
-          className={`px-4 py-2 rounded-lg border ${
+          className={`w-32 px-4 py-2 rounded-lg border ${
             tab === "teams"
-              ? "bg-primary text-primary-foreground"
-              : ""
+              ? "bg-custom-hover text-foreground font-semibold text-sm"
+              : "text-muted-foreground text-sm"
           }`}
           onClick={() => setTab("teams")}
         >
@@ -41,9 +42,7 @@ export default function HomeClient() {
       )}
 
       {tab === "teams" && (
-        <div className="border rounded-xl p-6 text-muted-foreground">
-          Próximamente
-        </div>
+        <TeamsRankingTable />
       )}
 
     </div>

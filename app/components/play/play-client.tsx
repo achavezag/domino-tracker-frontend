@@ -2,18 +2,30 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getTeams } from "@/lib/api/api";
-import { Team } from "@/lib/types/types";
+import { getCurrentSeason, getTeams } from "@/lib/api/api";
+import { Season, Team } from "@/lib/types/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { toDateInputValue } from "@/lib/helpers";
+import { Spinner } from "@/components/ui/spinner";
+
+const today = toDateInputValue(new Date());
 
 export default function PlayClient() {
   const router = useRouter();
 
-  const { data: teams = [] } = useQuery<Team[]>({
+  const { data: teams = [], isLoading: teamsLoading } = useQuery<Team[]>({
     queryKey: ["teams"],
     queryFn: getTeams,
+  });
+
+  const [date, setDate] = useState<string>(today);
+
+  const { data: currentSeason, error: seasonError, isFetching: seasonLoading } = useQuery<Season>({
+    queryKey: ["season", date],
+    queryFn: () => getCurrentSeason(date),
   });
 
   const [teamAId, setTeamAId] = useState<string>("");
@@ -53,10 +65,42 @@ export default function PlayClient() {
         <h2 className="font-semibold mb-1">Crear juego</h2>
       </div>
 
+      {/* DATE */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2 items-center px-2">
+          <p className="text-sm text-gray-500">Temporada</p>
+          {seasonLoading ? (
+            <Spinner />
+          ) : seasonError ? (
+            <p className="text-sm text-custom-lose">Sin temporada</p>
+          ) : (
+            <div className="rounded-full border border-custom-hover bg-custom-hover/50 px-2">
+              <p className="font-semibold text-accent-foreground/80">{currentSeason?.id}</p>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2 items-center justify-end">
+          <span className="text-sm text-muted-foreground">Fecha</span>
+          <Input
+            className="h-8 w-40"
+            type="date"
+            value={date}
+            max={today}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
+      </div>
+
       {/* TEAM A */}
-      <Select value={teamAId} onValueChange={handleTeamAChange}>
+      <Select value={teamAId} onValueChange={handleTeamAChange} disabled={teamsLoading}>
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Equipo A" />
+          {teamsLoading ? (
+            <span className="flex items-center gap-2 text-muted-foreground">
+              <Spinner /> Cargando equipos...
+            </span>
+          ) : (
+            <SelectValue placeholder="Equipo A" />
+          )}
         </SelectTrigger>
         <SelectContent>
           {teams.map((t) => {
@@ -77,9 +121,15 @@ export default function PlayClient() {
       </Select>
 
       {/* TEAM B */}
-      <Select value={teamBId} onValueChange={handleTeamBChange}>
+      <Select value={teamBId} onValueChange={handleTeamBChange} disabled={teamsLoading}>
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Equipo B" />
+          {teamsLoading ? (
+            <span className="flex items-center gap-2 text-muted-foreground">
+              <Spinner /> Cargando equipos...
+            </span>
+          ) : (
+            <SelectValue placeholder="Equipo B" />
+          )}
         </SelectTrigger>
         <SelectContent>
           {teams.map((t) => {
@@ -110,35 +160,45 @@ export default function PlayClient() {
         </SelectContent>
       </Select>
 
-      {/* BUTTONS */}
+      {/* BUTTONS */} 
       <div className="flex gap-2 justify-end">
-          <Button
-            variant="outline"
-            className="w-32"
-            onClick={handleClear}
-            disabled={!teamAId && !teamBId}
-          >
-            Limpiar
-          </Button>
+        <Button
+          variant="outline"
+          className="w-32"
+          onClick={handleClear}
+          disabled={!teamAId && !teamBId}
+        >
+          Limpiar
+        </Button>
 
-          <Button
-            className="w-32"
-            disabled={!teamAId || !teamBId || sameTeam || hasConflict}
-            onClick={() => {
-              if (!selectedTeamA || !selectedTeamB) return;
+        <Button
+          className="w-32"
+          disabled={
+            teamsLoading ||
+            seasonLoading ||
+            !teamAId ||
+            !teamBId ||
+            sameTeam ||
+            hasConflict ||
+            !date ||
+            !!seasonError
+          }
+          onClick={() => {
+            if (!selectedTeamA || !selectedTeamB) return;
 
-              const params = new URLSearchParams({
-                teamA: JSON.stringify(selectedTeamA),
-                teamB: JSON.stringify(selectedTeamB),
-                type,
-              });
-            
-              router.push(`/play/match?${params.toString()}`);
-            }}
-          >
-            Iniciar partido
-          </Button>
-        </div>
-    </div>
+            const params = new URLSearchParams({
+              teamA: JSON.stringify(selectedTeamA),
+              teamB: JSON.stringify(selectedTeamB),
+              type,
+              date,
+            });
+
+            router.push(`/play/match?${params.toString()}`);
+          }}
+        >
+          Iniciar partido
+        </Button>
+      </div>
+    </div>    
   );
 }
