@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { formatDate, toDateInputValue } from '@/lib/helpers';
 import { LoadingState, Spinner } from '@/components/ui/spinner';
+import { cn } from '@/lib/utils';
 
 export default function MatchClient() {
   const router = useRouter();
@@ -33,8 +34,8 @@ export default function MatchClient() {
   const [createdMatch, setCreatedMatch] = useState<MatchDetail | null>(null);
 
   const { data: history = [], isLoading: historyLoading } = useQuery<MatchHistoryItem[]>({
-    queryKey: ["match-history", teamA.id, teamB.id, type],
-    queryFn: () => getMatchHistory(teamA.id, teamB.id, type),
+    queryKey: ["match-history", teamA.id, teamB.id, type, date],
+    queryFn: () => getMatchHistory(teamA.id, teamB.id, type, date),
     enabled: !!teamA.id && !!teamB.id,
   });
 
@@ -93,6 +94,41 @@ export default function MatchClient() {
     },
   });
 
+  const processedHistory = (() => {
+    let winsA = 0;
+    let winsB = 0;
+
+    return history.map((m) => {
+      const isSameOrder =
+        m.teamAId === teamA.id &&
+        m.teamBId === teamB.id;
+
+      const scoreA = isSameOrder
+        ? m.teamAScore
+        : m.teamBScore;
+
+      const scoreB = isSameOrder
+        ? m.teamBScore
+        : m.teamAScore;
+
+      const isWinA = scoreA > scoreB;
+      const isWinB = scoreA < scoreB;
+
+      if (isWinA) winsA++;
+      if (isWinB) winsB++;
+
+      return { match: m, scoreA, scoreB, isWinA, isWinB, winsA, winsB };
+    });
+  })();
+
+  const dayWinsA = processedHistory.length > 0
+    ? processedHistory[processedHistory.length - 1].winsA
+    : 0;
+
+  const dayWinsB = processedHistory.length > 0
+    ? processedHistory[processedHistory.length - 1].winsB
+    : 0;
+
   const allMatchIds = Array.from(
     new Set([
       ...history.map((m) => m.id),
@@ -114,9 +150,7 @@ export default function MatchClient() {
     saveWarMutation.mutate(allMatchIds);
   };
 
-  const canSaveWar =
-    createdMatch &&
-    allMatchIds.length > 0;
+  const canSaveWar = createdMatch && allMatchIds.length > 0;
   
   if (!teamA?.id || !teamB?.id) {
     return (
@@ -129,9 +163,13 @@ export default function MatchClient() {
   return (
     <div className="p-4 flex flex-col gap-2 max-w-xl">
 
-      {/* DATE */}
-      <div className="text-xs text-muted-foreground">
-        {formatDate(date)}
+      {/* DATE + TYPE */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <span>{formatDate(date)}</span>
+        <span>•</span>
+        <span className={type === "Fixed" ? "font-medium text-custom-fixed" : "font-medium text-custom-rotating"}>
+          {type === "Fixed" ? "Fijo" : "Rotativo"}
+        </span>
       </div>
 
       {/* HEADER */}
@@ -142,9 +180,7 @@ export default function MatchClient() {
         </span>
 
         <span className="text-xl">
-          {createdMatch
-            ? `${createdMatch.teamAScore} - ${createdMatch.teamBScore}`
-            : "-"}
+          {dayWinsA} - {dayWinsB}
         </span>
 
         <span>
@@ -156,62 +192,51 @@ export default function MatchClient() {
       {/* DAY HISTORY */}
       {historyLoading && <LoadingState label="Cargando historial..." />}
 
-      {!historyLoading && history.length > 0 && (
+      {!historyLoading && processedHistory.length > 0 && (
         <div className="border rounded p-2 text-sm bg-muted/30">
 
-          {(() => {
-            let winsA = 0;
-            let winsB = 0;
+          {processedHistory.map(({ match: m, scoreA, scoreB, isWinA, isWinB, winsA, winsB }) => (
+            <div
+              key={m.id}
+              className="flex items-center justify-between text-sm"
+            >
 
-            return history.map((m) => {
-              const isSameOrder =
-                m.teamAId === teamA.id &&
-                m.teamBId === teamB.id;
+              <span
+                className={cn(
+                  "inline-flex items-center justify-center w-4 h-4 rounded-full border text-xs transition-colors",
+                  isWinA
+                    ? "border-custom-win bg-custom-win/15 text-custom-win font-bold scale-110"
+                    : "border-custom-avg text-custom-avg"
+                )}
+              >
+                {winsA}
+              </span>
 
-              const scoreA = isSameOrder
-                ? m.teamAScore
-                : m.teamBScore;
+              <span className="w-1/3 text-center font-semibold">
+                <span className={isWinA ? "text-custom-win" : "text-custom-lose"}>
+                  {scoreA}
+                </span>
 
-              const scoreB = isSameOrder
-                ? m.teamBScore
-                : m.teamAScore;
+                <span className="px-2">-</span>
 
-              const isWinA = scoreA > scoreB;
-              const isWinB = scoreA < scoreB;
+                <span className={!isWinA ? "text-custom-win" : "text-custom-lose"}>
+                  {scoreB}
+                </span>
+              </span>
 
-              if (isWinA) winsA++;
-              if (isWinB) winsB++;
+              <span
+                className={cn(
+                  "inline-flex items-center justify-center w-4 h-4 rounded-full border text-xs transition-colors",
+                  isWinB
+                    ? "border-custom-win bg-custom-win/15 text-custom-win font-bold scale-110"
+                    : "border-custom-avg text-custom-avg"
+                )}
+              >
+                {winsB}
+              </span>
 
-              return (
-                <div
-                  key={m.id}
-                  className="flex items-center justify-between text-sm"
-                >
-
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full border border-custom-avg text-custom-avg text-xs">
-                    {winsA}
-                  </span>
-
-                  <span className="w-1/3 text-center font-semibold">
-                    <span className={isWinA ? "text-custom-win" : "text-custom-lose"}>
-                      {scoreA}
-                    </span>
-
-                    <span className="px-2">-</span>
-
-                    <span className={!isWinA ? "text-custom-win" : "text-custom-lose"}>
-                      {scoreB}
-                    </span>
-                  </span>
-
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full border border-custom-avg text-custom-avg text-xs">
-                    {winsB}
-                  </span>
-
-                </div>
-              );
-            });
-          })()}
+            </div>
+          ))}
 
         </div>
       )}

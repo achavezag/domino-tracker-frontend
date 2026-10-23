@@ -1,18 +1,33 @@
 import {
   CreatePlayerRequest,
   CreateSeasonRequest,
+  CreateSessionRequest,
   CreateTeamRequest,
   MatchDetail,
   MatchFilters,
   MatchListItem,
+  Player,
   PlayerStats,
   Season,
+  Session,
   TeamStats,
+  UpdatePlayerRequest,
   UpdateSeasonRequest,
 } from '@/lib/types/types';
 import { CreateMatchRequest } from '@/lib/types/types';
+import { useSessionStore } from '@/lib/store/session-store';
 
 const API_URL = "http://localhost:5166";
+
+function apiFetch(url: string, init?: RequestInit): Promise<Response> {
+  return fetch(url, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      "X-Session-Id": String(useSessionStore.getState().sessionId),
+    },
+  });
+}
 
 function withSeasonIds(seasonIds?: number[]): string {
   if (!seasonIds || seasonIds.length === 0) return "";
@@ -21,9 +36,40 @@ function withSeasonIds(seasonIds?: number[]): string {
   return `?${params.toString()}`;
 }
 
+// Sessions
+export async function getSessions(): Promise<Session[]> {
+  const res = await apiFetch(`${API_URL}/api/sessions`);
+  if (!res.ok) throw new Error("Failed to fetch sessions");
+
+  return res.json();
+};
+
+export async function createSession(data: CreateSessionRequest): Promise<Session> {
+  const res = await apiFetch(`${API_URL}/api/sessions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    let message = "Error creando sesión";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
 // Seasons
 export async function getSeasons(): Promise<Season[]> {
-  const res = await fetch(`${API_URL}/api/Seasons`);
+  const res = await apiFetch(`${API_URL}/api/Seasons`);
   if (!res.ok) throw new Error("Failed to fetch seasons");
 
   return res.json();
@@ -34,14 +80,14 @@ export async function getCurrentSeason(date?: string): Promise<Season> {
     ? `${API_URL}/api/Seasons/by-date?date=${date}`
     : `${API_URL}/api/Seasons/by-date`;
 
-    const res = await fetch(url);
+    const res = await apiFetch(url);
   if (!res.ok) throw new Error("Failed to fetch season");
 
   return res.json();
 }
 
 export async function createSeason(data: CreateSeasonRequest): Promise<Season> {
-  const res = await fetch(`${API_URL}/api/Seasons`, {
+  const res = await apiFetch(`${API_URL}/api/Seasons`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -64,7 +110,7 @@ export async function createSeason(data: CreateSeasonRequest): Promise<Season> {
 }
 
 export async function updateSeason(id: number, data: UpdateSeasonRequest): Promise<Season> {
-  const res = await fetch(`${API_URL}/api/Seasons/${id}`, {
+  const res = await apiFetch(`${API_URL}/api/Seasons/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -87,7 +133,7 @@ export async function updateSeason(id: number, data: UpdateSeasonRequest): Promi
 }
 
 export async function deleteSeason(id: number): Promise<void> {
-  const res = await fetch(`${API_URL}/api/Seasons/${id}`, {
+  const res = await apiFetch(`${API_URL}/api/Seasons/${id}`, {
     method: "DELETE",
   });
 
@@ -105,15 +151,78 @@ export async function deleteSeason(id: number): Promise<void> {
 
 // Players
 export async function getPlayers() {
-  const res = await fetch(`${API_URL}/api/Players`);
+  const res = await apiFetch(`${API_URL}/api/Players`);
   if (!res.ok) throw new Error("Failed to fetch players");
 
   return res.json();
 };
 
+export async function updatePlayer(id: string, data: UpdatePlayerRequest): Promise<Player> {
+  const res = await apiFetch(`${API_URL}/api/Players/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    let message = "Error actualizando jugador";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
+export async function updatePlayerImage(id: string, image: string): Promise<Player> {
+  const res = await apiFetch(`${API_URL}/api/Players/${id}/image`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ image }),
+  });
+
+  if (!res.ok) {
+    let message = "Error actualizando imagen del jugador";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
+export async function deletePlayer(id: string): Promise<void> {
+  const res = await apiFetch(`${API_URL}/api/Players/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    let message = "Error eliminando jugador";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
+}
+
 // Teams
 export async function getTeams() {
-  const res = await fetch(`${API_URL}/api/Teams`);
+  const res = await apiFetch(`${API_URL}/api/Teams`);
   if (!res.ok) throw new Error("Failed to get teams");
 
   return res.json();
@@ -121,7 +230,7 @@ export async function getTeams() {
 
 // Matches
 export async function createMatch(data: CreateMatchRequest): Promise<MatchDetail> {
-  const res = await fetch(`${API_URL}/api/Matches`, {
+  const res = await apiFetch(`${API_URL}/api/Matches`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -135,7 +244,7 @@ export async function createMatch(data: CreateMatchRequest): Promise<MatchDetail
 };
 
 export async function getMatch(matchId: string): Promise<MatchDetail> {
-  const res = await fetch(`${API_URL}/api/Matches/${matchId}`);
+  const res = await apiFetch(`${API_URL}/api/Matches/${matchId}`);
   if (!res.ok) throw new Error("Failed to fetch match");
 
   return res.json();
@@ -149,7 +258,7 @@ export async function finishMatch(
     teamBScore: number;
   }
 ): Promise<MatchDetail> {
-  const res = await fetch(`${API_URL}/api/Matches/${matchId}/finish`, {
+  const res = await apiFetch(`${API_URL}/api/Matches/${matchId}/finish`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -173,7 +282,7 @@ export async function finishMatch(
 
 // Players stats
 export async function getPlayersStats(seasonIds?: number[]): Promise<PlayerStats[]> {
-  const res = await fetch(`${API_URL}/api/Players/stats${withSeasonIds(seasonIds)}`);
+  const res = await apiFetch(`${API_URL}/api/Players/stats${withSeasonIds(seasonIds)}`);
   if (!res.ok) throw new Error("Failed to get player stats");
 
   return res.json();
@@ -181,7 +290,7 @@ export async function getPlayersStats(seasonIds?: number[]): Promise<PlayerStats
 
 // Create player
 export async function createPlayer(data: CreatePlayerRequest) {
-  const res = await fetch(`${API_URL}/api/Players`, {
+  const res = await apiFetch(`${API_URL}/api/Players`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -196,7 +305,7 @@ export async function createPlayer(data: CreatePlayerRequest) {
 
 // Create team
 export async function createTeam(data: CreateTeamRequest) {
-  const res = await fetch(`${API_URL}/api/Teams`, {
+  const res = await apiFetch(`${API_URL}/api/Teams`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -211,7 +320,7 @@ export async function createTeam(data: CreateTeamRequest) {
 
 // Teams stats
 export async function getTeamsStats(seasonIds?: number[]): Promise<TeamStats[]> {
-  const res = await fetch(`${API_URL}/api/Teams/stats${withSeasonIds(seasonIds)}`);
+  const res = await apiFetch(`${API_URL}/api/Teams/stats${withSeasonIds(seasonIds)}`);
   if (!res.ok) throw new Error("Failed to get teams stats");
 
   return res.json();
@@ -230,46 +339,30 @@ export async function getMatches(filters: MatchFilters): Promise<MatchListItem[]
     params.append("seasonIds", filters.seasonIds.join(","));
   }
 
-  const res = await fetch(`${API_URL}/api/Matches?${params.toString()}`);
+  const res = await apiFetch(`${API_URL}/api/Matches?${params.toString()}`);
   if (!res.ok) throw new Error("Failed to fetch matches");
 
   return res.json();
 };
 
 export async function getWars(seasonIds?: number[]) {
-  const res = await fetch(`${API_URL}/api/wars${withSeasonIds(seasonIds)}`);
+  const res = await apiFetch(`${API_URL}/api/wars${withSeasonIds(seasonIds)}`);
   if (!res.ok) throw new Error("Error fetching wars");
   return res.json();
 }
 
 export async function getWarById(id: string) {
-  const res = await fetch(`${API_URL}/api/wars/${id}`);
+  const res = await apiFetch(`${API_URL}/api/wars/${id}`);
   if (!res.ok) throw new Error("Error fetching war detail");
   return res.json();
 }
 
-export async function createTodayWar() {
-  const res = await fetch(`${API_URL}/api/wars/today`, {
-    method: "POST",
-  });
+export async function getMatchHistory(teamAId: string, teamBId: string, type: "Fixed" | "Rotating", date?: string) {
+  const params = new URLSearchParams({ teamAId, teamBId, type });
+  if (date) params.append("date", date);
 
-  if (!res.ok) {
-    let message = "Error creando guerra";
-
-    try {
-      const data = await res.json();
-      message = data.message || data.title || message;
-    } catch {
-      // fallback si no viene JSON
-    }
-
-    throw new Error(message);
-  }
-};
-
-export async function getMatchHistory(teamAId: string, teamBId: string, type: "Fixed" | "Rotating") {
-  const res = await fetch(
-    `${API_URL}/api/wars/history?teamAId=${teamAId}&teamBId=${teamBId}&type=${type}`
+  const res = await apiFetch(
+    `${API_URL}/api/wars/history?${params.toString()}`
   );
 
   if (!res.ok) throw new Error("Error fetching match history");
@@ -278,7 +371,7 @@ export async function getMatchHistory(teamAId: string, teamBId: string, type: "F
 }
 
 export async function createWar(matchIds: string[]) {
-  const res = await fetch(`${API_URL}/api/wars`, {
+  const res = await apiFetch(`${API_URL}/api/wars`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -304,7 +397,7 @@ export async function getHeadToHead(player1Id: string, player2Id: string, season
     params.append("seasonIds", seasonIds.join(","));
   }
 
-  const res = await fetch(`${API_URL}/api/Players/headtohead?${params.toString()}`);
+  const res = await apiFetch(`${API_URL}/api/Players/headtohead?${params.toString()}`);
 
   if (!res.ok) {
     throw new Error("Error obteniendo cara a cara");

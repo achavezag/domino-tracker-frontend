@@ -2,13 +2,19 @@ export type Player = {
   id: string;
   name: string;
   nickname: string;
+  image: string | null;
+};
+
+export type SeasonPlayed = {
+  id: number;
+  alias: number;
 };
 
 export type Team = {
   id: string;
   player1: Player;
   player2: Player;
-  seasonsPlayed: number[];
+  seasonsPlayed: SeasonPlayed[];
 };
 
 export type MatchDetail = {
@@ -59,6 +65,12 @@ export type PlayerStats = {
 };
 
 export type CreatePlayerRequest = {
+  name: string;
+  nickname: string;
+  image?: string;
+};
+
+export type UpdatePlayerRequest = {
   name: string;
   nickname: string;
 };
@@ -113,8 +125,19 @@ export type MatchFilters = {
   seasonIds?: number[];
 };
 
+export type Session = {
+  id: number;
+  name: string;
+  createdAt: string;
+};
+
+export type CreateSessionRequest = {
+  name: string;
+};
+
 export type Season = {
   id: number;
+  alias: number;
   startDate: string;
   endDate: string | null;
 };

@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { useSeasonStore } from '@/lib/store/season-store';
 import { LoadingState } from '@/components/ui/spinner';
+import ViewModeSwitch from '../view-mode-switch';
 
 type Filters = {
   opponentTeamId?: string;
@@ -94,195 +95,202 @@ export default function TeamsClient() {
   }
 
   return (
-    <div className="flex flex-col pb-2">
-      <div className="grid grid-cols-4 gap-4">
+    <div className="flex flex-col">
 
-        {/* TEAMS */}
-        {visibleTeams
-          .filter((team) =>
-            selectedTeamId ? team.id === selectedTeamId : true
-          )
-          .map((team) => {
-            const stats = statsMap.get(team.id);
+      <div className="flex items-center justify-end mb-2 pr-28 py-4 border-b border-ring">
+        <ViewModeSwitch />
+      </div>
 
-            return (
-              <TeamCard
-                key={team.id}
-                team={team}
-                stats={stats}
-                onClick={() => {
-                  const isSame = selectedTeamId === team.id;
+      <div className="flex flex-col pb-2">
+        <div className="grid grid-cols-4 gap-4">
 
-                  if (isSame) {
-                    setSelectedTeamId(undefined);
-                  } else {
-                    setSelectedTeamId(team.id);
+          {/* TEAMS */}
+          {visibleTeams
+            .filter((team) =>
+              selectedTeamId ? team.id === selectedTeamId : true
+            )
+            .map((team) => {
+              const stats = statsMap.get(team.id);
+
+              return (
+                <TeamCard
+                  key={team.id}
+                  team={team}
+                  stats={stats}
+                  onClick={() => {
+                    const isSame = selectedTeamId === team.id;
+
+                    if (isSame) {
+                      setSelectedTeamId(undefined);
+                    } else {
+                      setSelectedTeamId(team.id);
+                    }
+                    
+                    setFilters({
+                      opponentTeamId: undefined,
+                      type: undefined,
+                      fromDate: undefined,
+                      toDate: undefined,
+                    });
+                  }}
+                  selected={selectedTeamId === team.id}
+                />
+              );
+            })}
+        </div>
+
+        {/* HISTORIAL + FILTROS */}
+        {selectedTeamId && selectedTeam && (
+          <div className="mt-6 flex flex-col gap-4">
+
+            {/* HEADER + FILTERS */}
+            <div className="flex w-full items-center justify-between gap-3 px-3 py-2 border border-ring rounded-xl">
+
+              <h2 className="text-lg font-semibold whitespace-nowrap">
+                Historial
+              </h2>
+
+              <div className="flex items-center gap-3 flex-wrap text-sm">
+
+                <span className="pr-2 whitespace-nowrap">
+                  {selectedTeam.player1.nickname} / {selectedTeam.player2.nickname}
+                </span>
+
+                {/* SCORE */}
+                <span className="font-bold">{winsA}</span>
+
+                <span>-</span>
+
+                <span className="font-bold">{winsB}</span>
+
+                {/* VS TEAM */}
+                <Select
+                  value={filters.opponentTeamId ?? "all"}
+                  onValueChange={(value) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      opponentTeamId:
+                        value === "all"
+                          ? undefined
+                          : value,
+                    }))
                   }
-                  
+                >
+                  <SelectTrigger className="w-56">
+                    <SelectValue placeholder="Global" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="all">
+                      Global
+                    </SelectItem>
+
+                    {teams
+                      .filter((t) => t.id !== selectedTeamId)
+                      .map((t) => (
+                        <SelectItem
+                          key={t.id}
+                          value={t.id}
+                        >
+                          {t.player1.nickname} / {t.player2.nickname}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+
+                <div className="w-2"></div>
+
+                {/* TYPE */}
+                <Select
+                  value={filters.type ?? "all"}
+                  onValueChange={(value) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      type:
+                        value === "all"
+                          ? undefined
+                          : (value as MatchType),
+                    }))
+                  }
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Tipo" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="all">
+                      Todos los partidos
+                    </SelectItem>
+
+                    <SelectItem value="Fixed">
+                      Fijo
+                    </SelectItem>
+
+                    <SelectItem value="Rotating">
+                      Rotativo
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* FROM DATE */}
+                <Input
+                  type="date"
+                  className="w-fit"
+                  value={filters.fromDate ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      fromDate: e.target.value || undefined,
+                    }))
+                  }
+                />
+
+                {/* TO DATE */}
+                <Input
+                  type="date"
+                  className="w-fit"
+                  value={filters.toDate ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      toDate: e.target.value || undefined,
+                    }))
+                  }
+                />
+              </div>
+
+              {/* CLEAR */}
+              <Button
+                variant="outline"
+                className="w-32"
+                onClick={() =>
                   setFilters({
                     opponentTeamId: undefined,
                     type: undefined,
                     fromDate: undefined,
                     toDate: undefined,
-                  });
-                }}
-                selected={selectedTeamId === team.id}
-              />
-            );
-          })}
-      </div>
-
-      {/* HISTORIAL + FILTROS */}
-      {selectedTeamId && selectedTeam && (
-        <div className="mt-6 flex flex-col gap-4">
-
-          {/* HEADER + FILTERS */}
-          <div className="flex w-full items-center justify-between gap-3 px-3 py-2 border border-ring rounded-xl">
-
-            <h2 className="text-lg font-semibold whitespace-nowrap">
-              Historial
-            </h2>
-
-            <div className="flex items-center gap-3 flex-wrap text-sm">
-
-              <span className="pr-2 whitespace-nowrap">
-                {selectedTeam.player1.nickname} / {selectedTeam.player2.nickname}
-              </span>
-
-              {/* SCORE */}
-              <span className="font-bold">{winsA}</span>
-
-              <span>-</span>
-
-              <span className="font-bold">{winsB}</span>
-
-              {/* VS TEAM */}
-              <Select
-                value={filters.opponentTeamId ?? "all"}
-                onValueChange={(value) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    opponentTeamId:
-                      value === "all"
-                        ? undefined
-                        : value,
-                  }))
+                  })
                 }
               >
-                <SelectTrigger className="w-56">
-                  <SelectValue placeholder="Global" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="all">
-                    Global
-                  </SelectItem>
-
-                  {teams
-                    .filter((t) => t.id !== selectedTeamId)
-                    .map((t) => (
-                      <SelectItem
-                        key={t.id}
-                        value={t.id}
-                      >
-                        {t.player1.nickname} / {t.player2.nickname}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-
-              <div className="w-2"></div>
-
-              {/* TYPE */}
-              <Select
-                value={filters.type ?? "all"}
-                onValueChange={(value) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    type:
-                      value === "all"
-                        ? undefined
-                        : (value as MatchType),
-                  }))
-                }
-              >
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Tipo" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="all">
-                    Todos los partidos
-                  </SelectItem>
-
-                  <SelectItem value="Fixed">
-                    Fijo
-                  </SelectItem>
-
-                  <SelectItem value="Rotating">
-                    Rotativo
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* FROM DATE */}
-              <Input
-                type="date"
-                className="w-fit"
-                value={filters.fromDate ?? ""}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    fromDate: e.target.value || undefined,
-                  }))
-                }
-              />
-
-              {/* TO DATE */}
-              <Input
-                type="date"
-                className="w-fit"
-                value={filters.toDate ?? ""}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    toDate: e.target.value || undefined,
-                  }))
-                }
-              />
+                Limpiar
+              </Button>
             </div>
 
-            {/* CLEAR */}
-            <Button
-              variant="outline"
-              className="w-32"
-              onClick={() =>
-                setFilters({
-                  opponentTeamId: undefined,
-                  type: undefined,
-                  fromDate: undefined,
-                  toDate: undefined,
-                })
-              }
-            >
-              Limpiar
-            </Button>
+            {/* MATCHES */}
+            {matchesLoading ? (
+              <LoadingState label="Cargando partidos..." />
+            ) : matches.length === 0 ? (
+              <span>No hay partidos</span>
+            ) : (
+              <div className="grid grid-cols-3 gap-3">
+                {matches.map((m) => (
+                  <MatchCard key={m.id} match={m} />
+                ))}
+              </div>
+            )}
           </div>
-
-          {/* MATCHES */}
-          {matchesLoading ? (
-            <LoadingState label="Cargando partidos..." />
-          ) : matches.length === 0 ? (
-            <span>No hay partidos</span>
-          ) : (
-            <div className="grid grid-cols-3 gap-3">
-              {matches.map((m) => (
-                <MatchCard key={m.id} match={m} />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

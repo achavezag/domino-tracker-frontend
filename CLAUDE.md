@@ -38,14 +38,14 @@ Any stats/listing query that should respect the season filter reads `selectedSea
 ### Matches, wars, and "play" flow
 
 - A **match** is one game between `teamA` and `teamB`, of type `Fixed` (same two teams) or `Rotating`.
-- A **war** is a saved set of matches (`createWar(matchIds)`) between the same two teams for a day; `createTodayWar`/`getWars`/`getWarById` manage these.
+- A **war** is a saved set of matches (`createWar(matchIds)`) between the same two teams for a day; `getWars`/`getWarById` manage these.
 - The `/play` → `/match` flow: `play-client.tsx` lets the user pick teams/type, then navigates to `/match` passing `teamA`, `teamB`, and `type` as JSON-stringified search params (see `match-client.tsx` parsing `searchParams.get("teamA")` with `JSON.parse`). `match-client.tsx` then creates matches, tracks same-day match history via `getMatchHistory`, and optionally bundles the day's matches into a war.
 
 ### UI components
 
 - `components/ui/*` are shadcn/radix-ui primitives (configured via `components.json`, style `radix-maia`, icon library `hugeicons`, base color `neutral`). Use the `shadcn` CLI conventions (aliases `@/components`, `@/lib`, `@/components/ui`, `@/hooks`) when adding new primitives rather than hand-rolling them.
 - `app/components/<feature>/` holds feature-specific client components (players, teams, match, wars, manage, play, home).
-- Player avatars are resolved by nickname via `getPlayerAvatar` in `lib/helpers.ts` → `/public/players/<nickname-lowercased>.png`; adding a player requires a matching image file.
+- Player avatars come from `player.image` (a Cloudinary URL, uploaded via `lib/cloudinary.ts#uploadImageToCloudinary` in `player-dialog.tsx`); when a player has no image, components fall back to `AvatarFallback` (initial letter) — there is no local `/public/players/*.png` lookup anymore.
 - Path alias `@/*` maps to the repo root (see `tsconfig.json`).
 
 ### Language

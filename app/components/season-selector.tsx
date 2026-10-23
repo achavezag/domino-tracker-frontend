@@ -1,24 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getSeasons } from '@/lib/api/api';
 import { Season } from '@/lib/types/types';
 import { useSeasonStore } from '@/lib/store/season-store';
 import { Spinner } from '@/components/ui/spinner';
-
-function useSeasonNumbers(seasons: Season[]) {
-  return useMemo(() => {
-    const ordered = [...seasons].sort(
-      (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-    );
-
-    const numbers = new Map<number, number>();
-    ordered.forEach((season, index) => numbers.set(season.id, index + 1));
-
-    return numbers;
-  }, [seasons]);
-}
 
 function findCurrentSeasonId(seasons: Season[]): number | null {
   const now = Date.now();
@@ -49,8 +36,6 @@ export default function SeasonSelector() {
     queryKey: ["seasons"],
     queryFn: getSeasons,
   });
-
-  const seasonNumbers = useSeasonNumbers(seasons);
 
   const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
   const initialized = useSeasonStore((s) => s.initialized);
@@ -87,7 +72,7 @@ export default function SeasonSelector() {
     ? "Todas"
     : seasons
         .filter((s) => selectedSeasonIds.includes(s.id))
-        .map((s) => `Temporada ${seasonNumbers.get(s.id)}`)
+        .map((s) => `Temporada ${s.alias}`)
         .join(", ") || "Todas";
 
   return (
@@ -133,7 +118,7 @@ export default function SeasonSelector() {
                 checked={selectedSeasonIds.includes(season.id)}
                 onChange={() => toggleSeason(season.id)}
               />
-              <span>Temporada {seasonNumbers.get(season.id)}</span>
+              <span>Temporada {season.alias}</span>
             </label>
           ))}
         </div>

@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { LoadingState } from '@/components/ui/spinner';
 import { useSeasonStore } from '@/lib/store/season-store';
+import ViewModeSwitch from '../view-mode-switch';
 
 export default function PlayersClient() {
   const [mode, setMode] = useState<"all" | "headtohead">("all");
@@ -80,88 +81,94 @@ export default function PlayersClient() {
       <div className="flex items-center justify-between mb-2 border-b border-ring p-4">
 
         {/* MODES */}
-        <div className="flex items-center gap-4">
+        <div className="flex w-full items-center justify-between">
 
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              checked={mode === "all"}
-              onChange={() => setMode("all")}
-            />
-            <span>Todos</span>
-          </label>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                checked={mode === "all"}
+                onChange={() => setMode("all")}
+              />
+              <span className="text-sm">Todos</span>
+            </label>
 
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              checked={mode === "headtohead"}
-              onChange={() => setMode("headtohead")}
-            />
-            <span>Cara a cara</span>
-          </label>
-
-        </div>
-
-        {/* SELECTS */}
-        {mode === "headtohead" && (
-          <div className="h-6 flex items-center gap-4">
-
-            {/* PLAYER 1 */}
-            <Select
-              value={player1Id}
-              onValueChange={setPlayer1Id}
-            >
-              <SelectTrigger className="w-52">
-                <SelectValue placeholder="Jugador 1" />
-              </SelectTrigger>
-
-              <SelectContent>
-                {players.map((p) => (
-                  <SelectItem
-                    key={p.id}
-                    value={p.id}
-                    disabled={p.id === player2Id}
-                  >
-                    {p.nickname}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* PLAYER 2 */}
-            <Select
-              value={player2Id}
-              onValueChange={setPlayer2Id}
-            >
-              <SelectTrigger className="w-52">
-                <SelectValue placeholder="Jugador 2" />
-              </SelectTrigger>
-
-              <SelectContent>
-                {players.map((p) => (
-                  <SelectItem
-                    key={p.id}
-                    value={p.id}
-                    disabled={p.id === player1Id}
-                  >
-                    {p.nickname}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* LIMPIAR */}
-            <Button
-              variant="outline"
-              className="w-32"
-              onClick={handleClear}
-              disabled={!player1Id && !player2Id}
-            >
-              Limpiar
-            </Button>
-
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                checked={mode === "headtohead"}
+                onChange={() => setMode("headtohead")}
+              />
+              <span className="text-sm">Cara a cara</span>
+            </label>
           </div>
-        )}
+
+          {/* SELECTS */}
+          {mode === "headtohead" && (
+            <div className="h-6 flex items-center gap-4">
+
+              {/* PLAYER 1 */}
+              <Select
+                value={player1Id}
+                onValueChange={setPlayer1Id}
+              >
+                <SelectTrigger className="w-52">
+                  <SelectValue placeholder="Jugador 1" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {players.map((p) => (
+                    <SelectItem
+                      key={p.id}
+                      value={p.id}
+                      disabled={p.id === player2Id}
+                    >
+                      {p.nickname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* PLAYER 2 */}
+              <Select
+                value={player2Id}
+                onValueChange={setPlayer2Id}
+              >
+                <SelectTrigger className="w-52">
+                  <SelectValue placeholder="Jugador 2" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {players.map((p) => (
+                    <SelectItem
+                      key={p.id}
+                      value={p.id}
+                      disabled={p.id === player1Id}
+                    >
+                      {p.nickname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* LIMPIAR */}
+              <Button
+                variant="outline"
+                className="w-32"
+                onClick={handleClear}
+                disabled={!player1Id && !player2Id}
+              >
+                Limpiar
+              </Button>
+
+            </div>
+          )}
+          
+          <div className="pr-28">
+            <ViewModeSwitch />
+          </div>         
+
+        </div>        
       </div>  
 
       {mode === "all" && (

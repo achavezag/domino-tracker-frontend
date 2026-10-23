@@ -85,8 +85,8 @@ export default function SeasonRowMenu({
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        title={`Eliminar Temporada ${season.id}`}
-        description="Esta acción no se puede deshacer. ¿Seguro que quieres eliminar esta temporada?"
+        title={`Eliminar Temporada ${season.alias}`}
+        description="Esta acción no se puede deshacer. ¿Seguro que quieres eliminar esta temporada? Las temporadas posteriores se renumerarán."
         confirmLabel="Eliminar"
         pendingLabel="Eliminando..."
         variant="destructive"

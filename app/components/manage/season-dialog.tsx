@@ -61,12 +61,12 @@ export default function SeasonDialog({
 
   const lastSeason = sortedSeasons[sortedSeasons.length - 1];
 
-  const nextId =
+  const nextAlias =
     mode === "create"
       ? seasons.length > 0
-        ? Math.max(...seasons.map((s) => s.id)) + 1
+        ? Math.max(...seasons.map((s) => s.alias)) + 1
         : 1
-      : season?.id ?? 0;
+      : season?.alias ?? 0;
 
   const defaultStartDate =
     mode === "create"
@@ -176,7 +176,7 @@ export default function SeasonDialog({
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Temporada</span>
-            <span className="font-semibold">{nextId}</span>
+            <span className="font-semibold">{nextAlias}</span>
           </div>
 
           <div className="flex items-center justify-between gap-4">

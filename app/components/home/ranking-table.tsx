@@ -3,6 +3,8 @@
 import { useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import { formatAverage } from '@/lib/helpers';
+import { useViewModeStore } from '@/lib/store/view-mode-store';
+import { cn } from '@/lib/utils';
 
 export type RankingRow = {
   id: string;
@@ -62,10 +64,10 @@ function buildColumns(nameLabel: string): Column[] {
     { key: "warLosses", label: "GP", kind: "lost", group: "Guerras", value: (r) => r.warLosses, display: (r) => `${r.warLosses}` },
     { key: "warWinRate", label: "G_AVG", kind: "avg", group: "Guerras", value: (r) => r.warWinRate, display: (r) => formatAverage(r.warWinRate) },
 
-    { key: "fixedMatches", label: "PGJ", kind: "played", group: "Partidos de guerras", value: (r) => r.fixedMatches, display: (r) => `${r.fixedMatches}` },
-    { key: "fixedWins", label: "PGG", kind: "won", group: "Partidos de guerras", value: (r) => r.fixedWins, display: (r) => `${r.fixedWins}` },
-    { key: "fixedLosses", label: "PGP", kind: "lost", group: "Partidos de guerras", value: (r) => r.fixedLosses, display: (r) => `${r.fixedLosses}` },
-    { key: "fixedMatchesWinRate", label: "PG_AVG", kind: "avg", group: "Partidos de guerras", value: (r) => r.fixedMatchesWinRate, display: (r) => formatAverage(r.fixedMatchesWinRate) },
+    { key: "fixedMatches", label: "PFJ", kind: "played", group: "Partidos de guerras", value: (r) => r.fixedMatches, display: (r) => `${r.fixedMatches}` },
+    { key: "fixedWins", label: "PFG", kind: "won", group: "Partidos de guerras", value: (r) => r.fixedWins, display: (r) => `${r.fixedWins}` },
+    { key: "fixedLosses", label: "PFP", kind: "lost", group: "Partidos de guerras", value: (r) => r.fixedLosses, display: (r) => `${r.fixedLosses}` },
+    { key: "fixedMatchesWinRate", label: "PF_AVG", kind: "avg", group: "Partidos de guerras", value: (r) => r.fixedMatchesWinRate, display: (r) => formatAverage(r.fixedMatchesWinRate) },
 
     { key: "rotatingMatches", label: "PRJ", kind: "played", group: "Partidos rotativos", value: (r) => r.rotatingMatches, display: (r) => `${r.rotatingMatches}` },
     { key: "rotatingWins", label: "PRG", kind: "won", group: "Partidos rotativos", value: (r) => r.rotatingWins, display: (r) => `${r.rotatingWins}` },
@@ -98,7 +100,19 @@ export default function RankingTable({
   rows: RankingRow[];
   nameLabel?: string;
 }) {
-  const columns = useMemo(() => buildColumns(nameLabel), [nameLabel]);
+  const viewMode = useViewModeStore((s) => s.viewMode);
+  const isCompact = viewMode === "compact";
+
+  const allColumns = useMemo(() => buildColumns(nameLabel), [nameLabel]);
+
+  const columns = useMemo(
+    () =>
+      isCompact
+        ? allColumns.filter((c) => !c.group || c.group === "General")
+        : allColumns,
+    [allColumns, isCompact]
+  );
+
   const groups = useMemo(() => groupSpans(columns), [columns]);
 
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -138,7 +152,7 @@ export default function RankingTable({
   }, [rows, columns, sortKey, sortDir]);
 
   return (
-    <div className="border rounded-xl overflow-hidden">
+    <div className={cn("border rounded-xl overflow-hidden", isCompact && "max-w-2xl mx-auto")}>
 
       <table className="w-full text-sm">
 
@@ -167,7 +181,12 @@ export default function RankingTable({
               return (
                 <th
                   key={col.key}
-                  className={`px-3 py-2 text-center select-none ${col.key === "name" ? "text-left" : ""} ${isGroupStart ? "border-l border-border" : ""}`}
+                  className={cn(
+                    "py-2 text-center select-none",
+                    isCompact ? "px-6" : "px-3",
+                    col.key === "name" && "text-left",
+                    isGroupStart && "border-l border-border"
+                  )}
                 >
                   <button
                     type="button"
@@ -200,7 +219,13 @@ export default function RankingTable({
                 return (
                   <td
                     key={col.key}
-                    className={`px-3 py-2 text-center ${col.key === "name" ? "text-left" : ""} ${kindClass[col.kind]} ${isGroupStart ? "border-l border-border" : ""}`}
+                    className={cn(
+                      "py-2 text-center",
+                      isCompact ? "px-6" : "px-3",
+                      col.key === "name" && "text-left",
+                      kindClass[col.kind],
+                      isGroupStart && "border-l border-border"
+                    )}
                   >
                     {col.display(row)}
                   </td>

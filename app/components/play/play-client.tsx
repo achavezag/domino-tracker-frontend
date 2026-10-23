@@ -75,7 +75,7 @@ export default function PlayClient() {
             <p className="text-sm text-custom-lose">Sin temporada</p>
           ) : (
             <div className="rounded-full border border-custom-hover bg-custom-hover/50 px-2">
-              <p className="font-semibold text-accent-foreground/80">{currentSeason?.id}</p>
+              <p className="font-semibold text-accent-foreground/80">{currentSeason?.alias}</p>
             </div>
           )}
         </div>
