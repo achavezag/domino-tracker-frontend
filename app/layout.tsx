@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Figtree } from 'next/font/google';
 import './globals.css';
 import QueryProvider from '@/providers/query-provider';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
+import AppShell from './components/app-shell';
 import { cn } from "@/lib/utils";
 import { Toaster } from 'sonner';
 
@@ -36,22 +35,8 @@ export default function RootLayout({
     >
       <body className="antialiased h-screen overflow-hidden">
         <QueryProvider>
-          <div className="flex h-screen">
-            <aside className="p-4 w-1/6 border-r">
-              <Sidebar />
-            </aside>
-            <div className="flex flex-col flex-1">
-              <div className="h-25 shrink-0 border-b bg-white">
-                <Header />
-              </div>
-              <main className="flex-1 overflow-hidden">
-                <div className="px-2 pt-2 h-full overflow-auto">
-                  {children}
-                  <Toaster position="bottom-right" richColors/>
-                </div>
-              </main>
-            </div>
-          </div>
+          <AppShell>{children}</AppShell>
+          <Toaster position="bottom-right" richColors/>
         </QueryProvider>
       </body>
     </html>

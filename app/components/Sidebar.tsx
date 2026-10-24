@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, User, Users, Swords, Settings, Play } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Home, User, Users, Swords, Settings, Play, ShieldUser, LogOut } from 'lucide-react';
 import SeasonSelector from './season-selector';
 import SessionSelector from './session-selector';
+import { useAuthStore } from '@/lib/store/auth-store';
 
 function DominoTileIcon({ className }: { className?: string }) {
   return (
@@ -32,6 +33,13 @@ function DominoTileIcon({ className }: { className?: string }) {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const role = useAuthStore((s) => s.role);
+  const username = useAuthStore((s) => s.username);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+
+  const canManage = role === "session_admin" || role === "super_admin";
+  const isSuperAdmin = role === "super_admin";
 
   const linkClass = (path: string) =>
     `flex items-center gap-2 px-2 py-1 rounded transition ${
@@ -40,8 +48,13 @@ export default function Sidebar() {
         : "text-custom-nick hover:bg-ring/10"
     }`;
 
+  const handleLogout = () => {
+    clearAuth();
+    router.replace("/login");
+  };
+
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full flex-col">
       <div className="flex flex-col gap-2 border-b border-t py-2">
         <SessionSelector />
         <SeasonSelector />
@@ -83,21 +96,49 @@ export default function Sidebar() {
             </Link>
           </li>
 
-          <li className="border-t mt-3 pt-3">
-            <Link href="/manage" className={linkClass("/manage")}>
-              <Settings className="size-4" />
-              Gestión
-            </Link>
-          </li>
+          {canManage && (
+            <>
+              <li className="border-t mt-3 pt-3">
+                <Link href="/manage" className={linkClass("/manage")}>
+                  <Settings className="size-4" />
+                  Gestión
+                </Link>
+              </li>
 
-          <li>
-            <Link href="/play" className={linkClass("/play")}>
-              <Play className="size-4" />
-              Jugar
-            </Link>
-          </li>
+              <li>
+                <Link href="/play" className={linkClass("/play")}>
+                  <Play className="size-4" />
+                  Jugar
+                </Link>
+              </li>
+            </>
+          )}
+
+          {isSuperAdmin && (
+            <li className="border-t mt-3 pt-3">
+              <Link href="/users" className={linkClass("/users")}>
+                <ShieldUser className="size-4" />
+                Usuarios
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
+
+      <div className="mt-auto flex items-center justify-between gap-2 border-t px-2 py-2">
+        <span className="truncate text-xs text-muted-foreground" title={username ?? undefined}>
+          {username}
+        </span>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          title="Cerrar sesión"
+          className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground"
+        >
+          <LogOut className="size-4" />
+        </button>
+      </div>
     </div>
   )
 }

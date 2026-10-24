@@ -1,32 +1,154 @@
 import {
+  AppUser,
   CreatePlayerRequest,
   CreateSeasonRequest,
   CreateSessionRequest,
   CreateTeamRequest,
+  CreateUserRequest,
+  LoginRequest,
+  LoginResponse,
   MatchDetail,
   MatchFilters,
   MatchListItem,
   Player,
   PlayerStats,
+  RoleOption,
   Season,
   Session,
   TeamStats,
   UpdatePlayerRequest,
   UpdateSeasonRequest,
+  UpdateUserRequest,
 } from '@/lib/types/types';
 import { CreateMatchRequest } from '@/lib/types/types';
 import { useSessionStore } from '@/lib/store/session-store';
+import { useAuthStore } from '@/lib/store/auth-store';
 
 const API_URL = "http://localhost:5166";
 
-function apiFetch(url: string, init?: RequestInit): Promise<Response> {
-  return fetch(url, {
+async function apiFetch(url: string, init?: RequestInit): Promise<Response> {
+  const token = useAuthStore.getState().token;
+
+  const res = await fetch(url, {
     ...init,
     headers: {
       ...init?.headers,
       "X-Session-Id": String(useSessionStore.getState().sessionId),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
+
+  if (res.status === 401 && typeof window !== "undefined") {
+    useAuthStore.getState().clearAuth();
+
+    if (window.location.pathname !== "/login") {
+      window.location.href = "/login";
+    }
+  }
+
+  return res;
+}
+
+// Auth
+export async function login(data: LoginRequest): Promise<LoginResponse> {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    let message = "Usuario, contraseña, rol o sesión inválidos";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
+// Users
+export async function getUsers(): Promise<AppUser[]> {
+  const res = await apiFetch(`${API_URL}/api/users`);
+  if (!res.ok) throw new Error("Failed to fetch users");
+
+  return res.json();
+}
+
+export async function getRoles(): Promise<RoleOption[]> {
+  const res = await apiFetch(`${API_URL}/api/roles`);
+  if (!res.ok) throw new Error("Failed to fetch roles");
+
+  return res.json();
+}
+
+export async function createUser(data: CreateUserRequest): Promise<AppUser> {
+  const res = await apiFetch(`${API_URL}/api/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    let message = "Error creando usuario";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
+export async function updateUser(id: number, data: UpdateUserRequest): Promise<AppUser> {
+  const res = await apiFetch(`${API_URL}/api/users/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    let message = "Error actualizando usuario";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
+export async function deleteUser(id: number): Promise<void> {
+  const res = await apiFetch(`${API_URL}/api/users/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    let message = "Error eliminando usuario";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
 }
 
 function withSeasonIds(seasonIds?: number[]): string {
@@ -238,7 +360,16 @@ export async function createMatch(data: CreateMatchRequest): Promise<MatchDetail
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) throw new Error("Failed to create match");
+  if (!res.ok) {
+    let message = "Error creando partido";
+
+    try {
+      const data = await res.json();
+      message = data.message || data.title || message;
+    } catch {}
+
+    throw new Error(message);
+  }
 
   return res.json();
 };

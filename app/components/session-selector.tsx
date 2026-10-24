@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createSession, getSessions } from '@/lib/api/api';
 import { Session } from '@/lib/types/types';
 import { useSessionStore } from '@/lib/store/session-store';
+import { useAuthStore } from '@/lib/store/auth-store';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -20,10 +21,14 @@ export default function SessionSelector() {
   const containerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
+  const role = useAuthStore((s) => s.role);
+  const authSessionName = useAuthStore((s) => s.sessionName);
+  const isSuperAdmin = role === "super_admin";
 
   const { data: sessions = [], isLoading } = useQuery<Session[]>({
     queryKey: ["sessions"],
     queryFn: getSessions,
+    enabled: isSuperAdmin,
   });
 
   const sessionId = useSessionStore((s) => s.sessionId);
@@ -73,6 +78,17 @@ export default function SessionSelector() {
   };
 
   const current = sessions.find((s) => s.id === sessionId);
+
+  if (!isSuperAdmin) {
+    return (
+      <div className="flex flex-col gap-1 w-full px-2">
+        <span className="text-xs text-muted-foreground">Sesión</span>
+        <div className="truncate border rounded px-2 py-1 text-sm text-muted-foreground" title={authSessionName ?? undefined}>
+          {authSessionName ?? "-"}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="relative flex flex-col gap-1 w-full px-2">

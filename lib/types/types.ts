@@ -177,6 +177,52 @@ export type MatchHistoryItem = {
   finishedAt?: string;
 };
 
+export type Role = "super_admin" | "session_admin" | "user";
+
+export type LoginRequest = {
+  username: string;
+  password: string;
+  role: Role;
+  sessionName?: string;
+};
+
+export type LoginResponse = {
+  token: string;
+  expiresAt: string;
+  username: string;
+  role: Role;
+  sessionId: number | null;
+  sessionName: string | null;
+};
+
+export type RoleOption = {
+  id: number;
+  name: Role;
+};
+
+export type AppUser = {
+  id: number;
+  username: string;
+  roleId: number;
+  roleName: Role;
+  sessionId: number | null;
+  sessionName: string | null;
+};
+
+export type CreateUserRequest = {
+  username: string;
+  password: string;
+  roleId: number;
+  sessionId: number | null;
+};
+
+export type UpdateUserRequest = {
+  username: string;
+  password?: string;
+  roleId: number;
+  sessionId: number | null;
+};
+
 export type HeadToHeadStats = {
   player1Id: string;
   player2Id: string;
