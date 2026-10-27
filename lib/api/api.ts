@@ -24,7 +24,7 @@ import { CreateMatchRequest } from '@/lib/types/types';
 import { useSessionStore } from '@/lib/store/session-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 
-const API_URL = "http://localhost:5166";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5166";
 
 async function apiFetch(url: string, init?: RequestInit): Promise<Response> {
   const token = useAuthStore.getState().token;
