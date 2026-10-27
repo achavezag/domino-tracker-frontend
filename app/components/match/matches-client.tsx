@@ -94,7 +94,7 @@ export default function MatchesClient() {
             teams={teams}
           />
         
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {visibleMatches.map((m) => (
               <MatchCard 
                 key={m.id} 

@@ -22,14 +22,14 @@ export default function WarItem({ war }: { war: WarListItem }) {
 
       {/* HEADER */}
       <div
-        className="px-3 py-2 cursor-pointer bg-muted flex justify-between items-center border-b border-ring"
+        className="px-2 md:px-3 py-2 cursor-pointer bg-muted flex justify-between items-center border-b border-ring"
         onClick={() => setOpen(!open)}
       >
         <span className="font-semibold text-sm text-custom-date">
           {formatDate(war.date)}
         </span>
 
-        <span className="text-sm font-medium">
+        <span className="flex w-full text-sm font-medium pl-4 md:justify-center md:pr-12">
           {war.teamAName} vs {war.teamBName}
         </span>
 
@@ -38,7 +38,7 @@ export default function WarItem({ war }: { war: WarListItem }) {
 
       {/* CONTENT */}
       {open && (
-        <div className="p-3 flex flex-col gap-2">
+        <div className="py-2 px-1 md:p-3 flex flex-col gap-2">
 
           {isLoading ? (
             <LoadingState />

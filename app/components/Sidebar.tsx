@@ -31,7 +31,7 @@ function DominoTileIcon({ className }: { className?: string }) {
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const role = useAuthStore((s) => s.role);
@@ -49,6 +49,7 @@ export default function Sidebar() {
     }`;
 
   const handleLogout = () => {
+    onNavigate?.();
     clearAuth();
     router.replace("/login");
   };
@@ -62,35 +63,35 @@ export default function Sidebar() {
       <nav className="py-4">
         <ul className="flex flex-col gap-1">
            <li>
-            <Link href="/" className={linkClass("/")}>
+            <Link href="/" className={linkClass("/")} onClick={onNavigate}>
               <Home className="size-4" />
               Inicio
             </Link>
           </li>
 
           <li>
-            <Link href="/players" className={linkClass("/players")}>
+            <Link href="/players" className={linkClass("/players")} onClick={onNavigate}>
               <User className="size-4" />
               Jugadores
             </Link>
           </li>
 
           <li>
-            <Link href="/teams" className={linkClass("/teams")}>
+            <Link href="/teams" className={linkClass("/teams")} onClick={onNavigate}>
               <Users className="size-4" />
               Parejas
             </Link>
           </li>
 
           <li>
-            <Link href="/match" className={linkClass("/match")}>
+            <Link href="/match" className={linkClass("/match")} onClick={onNavigate}>
               <DominoTileIcon className="size-4" />
               Partidos
             </Link>
           </li>
 
           <li>
-            <Link href="/wars" className={linkClass("/wars")}>
+            <Link href="/wars" className={linkClass("/wars")} onClick={onNavigate}>
               <Swords className="size-4" />
               Guerras
             </Link>
@@ -99,14 +100,14 @@ export default function Sidebar() {
           {canManage && (
             <>
               <li className="border-t mt-3 pt-3">
-                <Link href="/manage" className={linkClass("/manage")}>
+                <Link href="/manage" className={linkClass("/manage")} onClick={onNavigate}>
                   <Settings className="size-4" />
                   Gestión
                 </Link>
               </li>
 
               <li>
-                <Link href="/play" className={linkClass("/play")}>
+                <Link href="/play" className={linkClass("/play")} onClick={onNavigate}>
                   <Play className="size-4" />
                   Jugar
                 </Link>
@@ -116,7 +117,7 @@ export default function Sidebar() {
 
           {isSuperAdmin && (
             <li className="border-t mt-3 pt-3">
-              <Link href="/users" className={linkClass("/users")}>
+              <Link href="/users" className={linkClass("/users")} onClick={onNavigate}>
                 <ShieldUser className="size-4" />
                 Usuarios
               </Link>

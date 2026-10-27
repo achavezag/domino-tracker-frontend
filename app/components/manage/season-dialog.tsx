@@ -182,7 +182,7 @@ export default function SeasonDialog({
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-muted-foreground">Fecha de inicio</span>
             <Input
-              className="h-8 w-40"
+              className="h-8 w-36 md:w-40 text-xs"
               type="date"
               value={startDate}
               disabled={mode === "edit" && hasMatches}
@@ -193,7 +193,7 @@ export default function SeasonDialog({
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-muted-foreground">Fecha de fin</span>
             <Input
-              className="h-8 w-40"
+              className="h-8 w-36 md:w-40 text-xs"
               type="date"
               value={endDate}
               min={startDate || undefined}

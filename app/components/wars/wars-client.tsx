@@ -18,15 +18,15 @@ export default function WarsClient() {
   if (isLoading) return <LoadingState />;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Guerras</h1>
+      <div className="flex items-center justify-center md:justify-start">
+        <h1 className="text-lg md:text-xl font-semibold text-shadow-2xs">Guerras</h1>
       </div>
 
       {/* LIST */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {wars.map((war) => (
           <WarItem key={war.id} war={war} />
         ))}

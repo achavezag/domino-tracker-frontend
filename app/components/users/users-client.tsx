@@ -3,11 +3,18 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '@/lib/api/api';
-import { AppUser } from '@/lib/types/types';
-import { Plus } from 'lucide-react';
+import { AppUser, Role } from '@/lib/types/types';
+import { Crown, Plus, Settings, Shield, User as UserIcon } from 'lucide-react';
 import { LoadingState } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import UserDialog from './user-dialog';
 import UserRowMenu from './user-row-menu';
+
+const roleIcons: Record<Role, typeof Crown> = {
+  super_admin: Crown,
+  session_admin: Shield,
+  user: UserIcon,
+};
 
 export default function UsersClient() {
   const [addOpen, setAddOpen] = useState(false);
@@ -40,21 +47,41 @@ export default function UsersClient() {
                 <th className="py-1.5 font-medium text-muted-foreground">Usuario</th>
                 <th className="py-1.5 font-medium text-muted-foreground">Rol</th>
                 <th className="py-1.5 font-medium text-muted-foreground">Sesión</th>
-                <th className="py-1.5 font-medium text-muted-foreground text-right">Acciones</th>
+                <th className="py-1.5 font-medium text-muted-foreground text-right">
+                  <span className="hidden md:inline">Acciones</span>
+                  <Tooltip>
+                    <TooltipTrigger className="md:hidden inline-flex">
+                      <Settings className="size-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>Acciones</TooltipContent>
+                  </Tooltip>
+                </th>
               </tr>
             </thead>
 
             <tbody>
-              {users.map((u) => (
-                <tr key={u.id} className="border-b border-ring/30 last:border-0">
-                  <td className="py-1.5">{u.username}</td>
-                  <td className="py-1.5 text-custom-nick">{u.roleName}</td>
-                  <td className="py-1.5 text-muted-foreground">{u.sessionName ?? "-"}</td>
-                  <td className="py-1.5 text-right">
-                    <UserRowMenu user={u} />
-                  </td>
-                </tr>
-              ))}
+              {users.map((u) => {
+                const RoleIcon = roleIcons[u.roleName];
+
+                return (
+                  <tr key={u.id} className="border-b border-ring/30 last:border-0">
+                    <td className="py-1.5">{u.username}</td>
+                    <td className="py-1.5 text-custom-nick">
+                      <span className="hidden md:inline">{u.roleName}</span>
+                      <Tooltip>
+                        <TooltipTrigger className="md:hidden inline-flex">
+                          <RoleIcon className="size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>{u.roleName}</TooltipContent>
+                      </Tooltip>
+                    </td>
+                    <td className="py-1.5 text-muted-foreground">{u.sessionName ?? "-"}</td>
+                    <td className="py-1.5 text-right">
+                      <UserRowMenu user={u} />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}

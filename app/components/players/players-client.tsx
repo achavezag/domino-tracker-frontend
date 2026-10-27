@@ -81,7 +81,7 @@ export default function PlayersClient() {
       <div className="flex items-center justify-between mb-2 border-b border-ring p-4">
 
         {/* MODES */}
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full flex-col items-center gap-3 md:flex-row md:justify-between">
 
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -105,7 +105,7 @@ export default function PlayersClient() {
 
           {/* SELECTS */}
           {mode === "headtohead" && (
-            <div className="h-6 flex items-center gap-4">
+            <div className="flex flex-col items-center gap-2 md:h-6 md:flex-row md:gap-4">
 
               {/* PLAYER 1 */}
               <Select
@@ -164,15 +164,15 @@ export default function PlayersClient() {
             </div>
           )}
           
-          <div className="pr-28">
+          <div className="md:pr-20">
             <ViewModeSwitch />
-          </div>         
+          </div>
 
         </div>        
       </div>  
 
       {mode === "all" && (
-        <div className='grid lg:grid-cols-4 md:grid-cols-3 gap-6 pr-2 pb-2'>
+        <div className='grid justify-items-center gap-6 pr-2 pb-2 md:grid-cols-3 md:justify-items-stretch lg:grid-cols-4'>
           {sortedPlayers.map((player) => {
             const stats = statsMap.get(player.id);
             return (
@@ -187,95 +187,142 @@ export default function PlayersClient() {
       )}
 
       {mode === "headtohead" && (
-        <div className="flex items-center justify-center gap-28 w-full min-h-125 pb-2">
+        <>
+          {/* DESKTOP */}
+          <div className="hidden md:flex items-center justify-center gap-28 w-full min-h-125 pb-2">
 
-          {/* LEFT PLAYER */}
-          <div className="">
+            {/* LEFT PLAYER */}
+            <div className="">
+              {selectedPlayer1 && selectedStats1 && (
+                <PlayerCard
+                  player={selectedPlayer1}
+                  stats={selectedStats1}
+                />
+              )}
+            </div>
+
+            {/* CENTER */}
+            <div className="w-[320px]">
+              {headToHeadLoading && <LoadingState />}
+
+              {!headToHeadLoading && headToHead && (
+                <div className="border border-ring rounded-xl px-6 py-4 w-full bg-card">
+
+                  <h2 className="text-center font-bold text-lg mb-2">
+                    Cara a cara
+                  </h2>
+
+                  <div className="space-y-4">
+
+                    {/* MATCHES */}
+                    <div className="border border-ring/75 rounded-lg p-2">
+                      <div className="flex justify-center text-sm text-muted-foreground mb-1">
+                        Total partidos
+                      </div>
+
+                      <div className="flex items-center justify-between px-2 text-lg font-bold">
+                        <span>{headToHead.player1Wins}</span>
+                        <span>{headToHead.player2Wins}</span>
+                      </div>
+                    </div>
+
+                    {/* ROTATING MATCHES */}
+                    <div className="border border-ring/75 rounded-lg p-2">
+                      <div className="flex justify-center text-sm text-muted-foreground mb-1">
+                        Partidos rotativos
+                      </div>
+
+                      <div className="flex items-center justify-between px-2 text-lg font-bold">
+                        <span>{headToHead.player1Wins - headToHead.player1WarMatchWins}</span>
+                        <span>{headToHead.player2Wins - headToHead.player2WarMatchWins}</span>
+                      </div>
+                    </div>
+
+                    {/* WAR MATCHES */}
+                    <div className="border border-ring/75 rounded-lg p-2">
+                      <div className="flex justify-center text-sm text-muted-foreground mb-1">
+                        Partidos fijos
+                      </div>
+
+                      <div className="flex items-center justify-between px-2 text-lg font-bold">
+                        <span>{headToHead.player1WarMatchWins}</span>
+                        <span>{headToHead.player2WarMatchWins}</span>
+                      </div>
+                    </div>
+
+                    {/* WARS */}
+                    <div className="border border-ring/75 rounded-lg p-2">
+                      <div className="flex justify-center text-sm text-muted-foreground mb-1">
+                        Guerras
+                      </div>
+
+                      <div className="flex items-center justify-between px-2 text-lg font-bold">
+                        <span>{headToHead.player1WarWins}</span>
+                        <span>{headToHead.player2WarWins}</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT PLAYER */}
+            <div className="">
+              {selectedPlayer2 && selectedStats2 && (
+                <PlayerCard
+                  player={selectedPlayer2}
+                  stats={selectedStats2}
+                />
+              )}
+            </div>
+
+          </div>
+
+          {/* MOBILE */}
+          <div className="flex md:hidden flex-col items-center gap-4 w-full pb-4">
+
+            {/* TOP PLAYER */}
             {selectedPlayer1 && selectedStats1 && (
               <PlayerCard
                 player={selectedPlayer1}
                 stats={selectedStats1}
               />
             )}
-          </div>
 
-          {/* CENTER */}
-          <div className="w-[320px]">
+            {/* STATS */}
             {headToHeadLoading && <LoadingState />}
 
             {!headToHeadLoading && headToHead && (
-              <div className="border border-ring rounded-xl px-6 py-4 w-full bg-card">
-
-                <h2 className="text-center font-bold text-lg mb-2">
-                  Cara a cara
-                </h2>
-
-                <div className="space-y-4">
-
-                  {/* MATCHES */}
-                  <div className="border border-ring/75 rounded-lg p-2">
-                    <div className="flex justify-center text-sm text-muted-foreground mb-1">
-                      Total partidos
-                    </div>
-
-                    <div className="flex items-center justify-between px-2 text-lg font-bold">
-                      <span>{headToHead.player1Wins}</span>
-                      <span>{headToHead.player2Wins}</span>
-                    </div>
+              <div className="flex items-center justify-center gap-2">
+                {[
+                  { label: "T", v1: headToHead.player1Wins, v2: headToHead.player2Wins },
+                  { label: "PR", v1: headToHead.player1Wins - headToHead.player1WarMatchWins, v2: headToHead.player2Wins - headToHead.player2WarMatchWins },
+                  { label: "PF", v1: headToHead.player1WarMatchWins, v2: headToHead.player2WarMatchWins },
+                  { label: "G", v1: headToHead.player1WarWins, v2: headToHead.player2WarWins },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="flex w-14 flex-col items-center justify-between gap-2 rounded-2xl border border-ring/75 bg-card px-1 py-3"
+                  >
+                    <span className="text-sm font-bold">{stat.v1}</span>
+                    <span className="font-semibold text-sm text-muted-foreground">{stat.label}</span>
+                    <span className="text-sm font-bold">{stat.v2}</span>
                   </div>
-
-                  {/* ROTATING MATCHES */}
-                  <div className="border border-ring/75 rounded-lg p-2">
-                    <div className="flex justify-center text-sm text-muted-foreground mb-1">
-                      Partidos rotativos
-                    </div>
-
-                    <div className="flex items-center justify-between px-2 text-lg font-bold">
-                      <span>{headToHead.player1Wins - headToHead.player1WarMatchWins}</span>
-                      <span>{headToHead.player2Wins - headToHead.player2WarMatchWins}</span>
-                    </div>
-                  </div>
-                  
-                  {/* WAR MATCHES */}
-                  <div className="border border-ring/75 rounded-lg p-2">
-                    <div className="flex justify-center text-sm text-muted-foreground mb-1">
-                      Partidos de guerras
-                    </div>
-
-                    <div className="flex items-center justify-between px-2 text-lg font-bold">
-                      <span>{headToHead.player1WarMatchWins}</span>
-                      <span>{headToHead.player2WarMatchWins}</span>
-                    </div>
-                  </div>
-
-                  {/* WARS */}
-                  <div className="border border-ring/75 rounded-lg p-2">
-                    <div className="flex justify-center text-sm text-muted-foreground mb-1">
-                      Guerras
-                    </div>
-
-                    <div className="flex items-center justify-between px-2 text-lg font-bold">
-                      <span>{headToHead.player1WarWins}</span>
-                      <span>{headToHead.player2WarWins}</span>
-                    </div>
-                  </div>
-
-                </div>
+                ))}
               </div>
             )}
-          </div>
 
-          {/* RIGHT PLAYER */}
-          <div className="">
+            {/* BOTTOM PLAYER */}
             {selectedPlayer2 && selectedStats2 && (
               <PlayerCard
                 player={selectedPlayer2}
                 stats={selectedStats2}
               />
             )}
-          </div>
 
-        </div>
+          </div>
+        </>
       )}
 
     </>

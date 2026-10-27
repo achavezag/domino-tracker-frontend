@@ -248,7 +248,7 @@ export default function MatchClient() {
           {/* TEAM A */}
           <div className="w-1/3 flex justify-center">
             <Input
-              className="h-8 w-20 text-center pl-6"
+              className="h-8 w-12 md:w-20 text-center md:pl-6"
               type="number"
               value={pointsA}
               onChange={(e) => setPointsA(e.target.value)}
@@ -264,7 +264,7 @@ export default function MatchClient() {
           {/* TEAM B */}
           <div className="w-1/3 flex justify-center">
             <Input
-              className="h-8 w-20 text-center pl-6"
+              className="h-8 w-12 md:w-20 text-center md:pl-6"
               type="number"
               value={pointsB}
               onChange={(e) => setPointsB(e.target.value)}

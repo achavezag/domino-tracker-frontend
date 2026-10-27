@@ -23,10 +23,10 @@ export default function WarMatchRow({
   const isWinA = scoreA > scoreB;
 
   return (
-    <div className="flex justify-between items-center text-sm border-b border-custom-border/50 pb-1">
+    <div className="flex justify-between gap-2 items-center text-sm border-b border-custom-border/50 pb-1">
 
       {/* TEAM A */}
-      <div className="w-1/3 flex justify-between items-center gap-2">
+      <div className="w-2/5 flex justify-between items-center gap-2">
         <span className="truncate font-medium">{teamAName}</span>
 
         <div className="w-4 h-4 flex items-center justify-center rounded-full border border-custom-avg text-custom-avg text-xs font-semibold">
@@ -35,7 +35,7 @@ export default function WarMatchRow({
       </div>
 
       {/* SCORE */}
-      <div className="w-1/3 text-center font-semibold">
+      <div className="w-1/5 text-center font-semibold">
         <span className={isWinA ? "text-custom-win" : "text-custom-lose"}>
           {scoreA}
         </span>
@@ -46,7 +46,7 @@ export default function WarMatchRow({
       </div>
 
       {/* TEAM B */}
-      <div className="w-1/3 flex justify-between items-center gap-2">
+      <div className="w-2/5 flex justify-between items-center gap-2">
         <div className="w-4 h-4 flex items-center justify-center rounded-full border border-custom-avg text-custom-avg text-xs font-semibold">
           {winsB}
         </div>

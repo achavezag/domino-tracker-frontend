@@ -9,12 +9,12 @@ export default function HomeClient() {
   const [tab, setTab] = useState<"players" | "teams">("players");
 
   return (
-    <div className="w-full max-w-11/12 p-6">
+    <div className="w-full max-w-11/12 p-1 md:p-3">
 
       {/* TABS */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col items-center gap-3 mb-6 md:flex-row md:items-center md:justify-between">
 
-        <div className="flex gap-2">
+        <div className="flex justify-center gap-2 md:justify-start">
           <button
             className={`w-32 px-4 py-2 rounded-lg border ${
               tab === "players"
@@ -37,10 +37,8 @@ export default function HomeClient() {
             Parejas
           </button>
         </div>
-        
-        <div className="pr-28">
-          <ViewModeSwitch />
-        </div>
+
+        <ViewModeSwitch />
 
       </div>
 

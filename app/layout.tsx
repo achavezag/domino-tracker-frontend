@@ -5,6 +5,7 @@ import QueryProvider from '@/providers/query-provider';
 import AppShell from './components/app-shell';
 import { cn } from "@/lib/utils";
 import { Toaster } from 'sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
@@ -35,8 +36,10 @@ export default function RootLayout({
     >
       <body className="antialiased h-screen overflow-hidden">
         <QueryProvider>
-          <AppShell>{children}</AppShell>
-          <Toaster position="bottom-right" richColors/>
+          <TooltipProvider>
+            <AppShell>{children}</AppShell>
+            <Toaster position="bottom-right" richColors/>
+          </TooltipProvider>
         </QueryProvider>
       </body>
     </html>

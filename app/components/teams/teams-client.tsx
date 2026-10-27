@@ -97,12 +97,12 @@ export default function TeamsClient() {
   return (
     <div className="flex flex-col">
 
-      <div className="flex items-center justify-end mb-2 pr-28 py-4 border-b border-ring">
+      <div className="flex items-center justify-center mb-2 py-4 border-b border-ring md:justify-end md:pr-20">
         <ViewModeSwitch />
       </div>
 
-      <div className="flex flex-col pb-2">
-        <div className="grid grid-cols-4 gap-4">
+      <div className="flex flex-col items-center md:w-full md:items-stretch pb-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
           {/* TEAMS */}
           {visibleTeams
@@ -141,18 +141,13 @@ export default function TeamsClient() {
 
         {/* HISTORIAL + FILTROS */}
         {selectedTeamId && selectedTeam && (
-          <div className="mt-6 flex flex-col gap-4">
+          <div className="mt-6 flex flex-col gap-4 md:w-full">
 
             {/* HEADER + FILTERS */}
-            <div className="flex w-full items-center justify-between gap-3 px-3 py-2 border border-ring rounded-xl">
-
-              <h2 className="text-lg font-semibold whitespace-nowrap">
-                Historial
-              </h2>
-
-              <div className="flex items-center gap-3 flex-wrap text-sm">
-
-                <span className="pr-2 whitespace-nowrap">
+            <div className="flex flex-col md:flex-row w-full items-center justify-between gap-3 px-1 py-2 border border-ring rounded-xl">
+                    
+              <div className="flex w-full items-center justify-between md:justify-start md:gap-2">
+                <span className="pr-2 whitespace-nowrap text-sm">
                   {selectedTeam.player1.nickname} / {selectedTeam.player2.nickname}
                 </span>
 
@@ -161,7 +156,7 @@ export default function TeamsClient() {
 
                 <span>-</span>
 
-                <span className="font-bold">{winsB}</span>
+                <span className="font-bold pr-2">{winsB}</span>
 
                 {/* VS TEAM */}
                 <Select
@@ -176,7 +171,7 @@ export default function TeamsClient() {
                     }))
                   }
                 >
-                  <SelectTrigger className="w-56">
+                  <SelectTrigger className="w-40 md:w-56">
                     <SelectValue placeholder="Global" />
                   </SelectTrigger>
 
@@ -197,9 +192,37 @@ export default function TeamsClient() {
                       ))}
                   </SelectContent>
                 </Select>
+              </div>
 
-                <div className="w-2"></div>
+              <div className="flex w-full justify-between md:justify-center gap-2 md:gap-6"> 
+                {/* FROM DATE */}
+                <Input
+                  type="date"
+                  className="w-40 md:w-fit text-sm"
+                  value={filters.fromDate ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      fromDate: e.target.value || undefined,
+                    }))
+                  }
+                />
 
+                {/* TO DATE */}
+                <Input
+                  type="date"
+                  className="w-40 md:w-fit text-sm"
+                  value={filters.toDate ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      toDate: e.target.value || undefined,
+                    }))
+                  }
+                />                
+              </div>              
+
+              <div className="flex w-full justify-between gap-2">
                 {/* TYPE */}
                 <Select
                   value={filters.type ?? "all"}
@@ -213,13 +236,13 @@ export default function TeamsClient() {
                     }))
                   }
                 >
-                  <SelectTrigger className="w-48">
+                  <SelectTrigger className="w-40 md:w-48">
                     <SelectValue placeholder="Tipo" />
                   </SelectTrigger>
 
                   <SelectContent>
                     <SelectItem value="all">
-                      Todos los partidos
+                      Partidos (todos)
                     </SelectItem>
 
                     <SelectItem value="Fixed">
@@ -232,48 +255,22 @@ export default function TeamsClient() {
                   </SelectContent>
                 </Select>
 
-                {/* FROM DATE */}
-                <Input
-                  type="date"
-                  className="w-fit"
-                  value={filters.fromDate ?? ""}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      fromDate: e.target.value || undefined,
-                    }))
+                {/* CLEAR */}
+                <Button
+                  variant="outline"
+                  className="w-32"
+                  onClick={() =>
+                    setFilters({
+                      opponentTeamId: undefined,
+                      type: undefined,
+                      fromDate: undefined,
+                      toDate: undefined,
+                    })
                   }
-                />
-
-                {/* TO DATE */}
-                <Input
-                  type="date"
-                  className="w-fit"
-                  value={filters.toDate ?? ""}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      toDate: e.target.value || undefined,
-                    }))
-                  }
-                />
+                >
+                  Limpiar
+                </Button>
               </div>
-
-              {/* CLEAR */}
-              <Button
-                variant="outline"
-                className="w-32"
-                onClick={() =>
-                  setFilters({
-                    opponentTeamId: undefined,
-                    type: undefined,
-                    fromDate: undefined,
-                    toDate: undefined,
-                  })
-                }
-              >
-                Limpiar
-              </Button>
             </div>
 
             {/* MATCHES */}
@@ -282,7 +279,7 @@ export default function TeamsClient() {
             ) : matches.length === 0 ? (
               <span>No hay partidos</span>
             ) : (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid.cols-1 md:grid-cols-3 gap-3">
                 {matches.map((m) => (
                   <MatchCard key={m.id} match={m} />
                 ))}

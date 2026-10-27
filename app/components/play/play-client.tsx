@@ -82,7 +82,7 @@ export default function PlayClient() {
         <div className="flex gap-2 items-center justify-end">
           <span className="text-sm text-muted-foreground">Fecha</span>
           <Input
-            className="h-8 w-40"
+            className="h-8 w-36 md:w-40 text-xs md:text-sm"
             type="date"
             value={date}
             max={today}

@@ -132,7 +132,7 @@ export default function UserDialog({ open, onOpenChange, mode, user }: Props) {
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-muted-foreground">Usuario</span>
             <Input
-              className="h-8 w-52"
+              className="h-8 w-48"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -143,7 +143,7 @@ export default function UserDialog({ open, onOpenChange, mode, user }: Props) {
               {isCreate ? "Contraseña" : "Nueva contraseña"}
             </span>
             <Input
-              className="h-8 w-52"
+              className="h-8 w-48"
               type="password"
               placeholder={isCreate ? "" : "Dejar en blanco para no cambiar"}
               value={password}
@@ -154,7 +154,7 @@ export default function UserDialog({ open, onOpenChange, mode, user }: Props) {
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-muted-foreground">Rol</span>
             <Select value={roleId} onValueChange={setRoleId} disabled={rolesLoading}>
-              <SelectTrigger className="w-52">
+              <SelectTrigger className="w-48">
                 <SelectValue placeholder="Selecciona un rol" />
               </SelectTrigger>
               <SelectContent>
@@ -171,7 +171,7 @@ export default function UserDialog({ open, onOpenChange, mode, user }: Props) {
             <div className="flex items-center justify-between gap-4">
               <span className="text-sm text-muted-foreground">Sesión</span>
               <Select value={sessionId} onValueChange={setSessionId} disabled={sessionsLoading}>
-                <SelectTrigger className="w-52">
+                <SelectTrigger className="w-48">
                   <SelectValue placeholder="Selecciona una sesión" />
                 </SelectTrigger>
                 <SelectContent>

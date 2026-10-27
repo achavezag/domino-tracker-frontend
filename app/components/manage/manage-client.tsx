@@ -82,8 +82,8 @@ export default function ManageClient() {
   );
 
   return (
-    <div className="flex gap-4 p-4">
-      <div className="flex flex-col gap-10 w-1/3">
+    <div className="flex flex-col w-full md:flex-row gap-4 p-2">
+      <div className="flex flex-col gap-4 w-full md:w-1/3">
 
         {/* SEASONS */}
         <div className="border border-ring pb-2 pt-4 px-3 rounded flex flex-col gap-3 max-w-md">
@@ -177,9 +177,9 @@ export default function ManageClient() {
 
       </div>
 
-      <div className="flex flex-col border border-ring rounded px-4 py-2 w-3/5">
-        <div className="flex justify-between pt-2 items-center mb-4">
-          <div className="flex items-center justify-between rounded pb-2 pt-2 px-1 bg-custom-hover/50 w-1/2">
+      <div className="flex flex-col w-full p-2 border border-ring rounded md:px-4 md:w-2/3">
+        <div className="flex flex-col md:flex-row md:justify-between gap-3 pt-2 items-center mb-4">
+          <div className="flex w-full items-center justify-between rounded pb-2 pt-2 px-1 bg-custom-hover/50 md:w-1/2">
             <h2 className="font-semibold">Equipos</h2>
             <button
               type="button"
@@ -190,24 +190,24 @@ export default function ManageClient() {
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2">
             <Input
               placeholder="Nombre / Alias"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-48"
+              className="w-36 md:w-44 text-sm"
             />
             <span className="text-muted-foreground font-medium">&</span>
             <Input
               placeholder="Nombre / Alias"
               value={search2}
               onChange={(e) => setSearch2(e.target.value)}
-              className="w-48"
+              className="w-36 md:w-44 text-sm"
             />
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-3">
           {teamsLoading ? (
             <LoadingState className="col-span-2" />
           ) : (
