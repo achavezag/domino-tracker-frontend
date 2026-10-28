@@ -69,7 +69,7 @@ export default function LoginClient() {
     <div className="flex h-screen items-center justify-center bg-zinc-50 px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Domino Tracker</CardTitle>
+          <CardTitle className="font-semibold text-shadow-2xs">Domino</CardTitle>
           <CardDescription>Inicia sesión para continuar</CardDescription>
         </CardHeader>
 
@@ -78,6 +78,7 @@ export default function LoginClient() {
             <div className="flex flex-col gap-1.5">
               <span className="text-sm text-muted-foreground">Usuario</span>
               <Input
+                className="text-sm"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -87,6 +88,7 @@ export default function LoginClient() {
             <div className="flex flex-col gap-1.5">
               <span className="text-sm text-muted-foreground">Contraseña</span>
               <Input
+                className="text-sm"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -114,6 +116,7 @@ export default function LoginClient() {
               <div className="flex flex-col gap-1.5">
                 <span className="text-sm text-muted-foreground">Sesión</span>
                 <Input
+                  className="text-sm"
                   placeholder="Nombre de la sesión"
                   value={sessionName}
                   onChange={(e) => setSessionName(e.target.value)}

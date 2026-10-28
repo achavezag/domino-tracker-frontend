@@ -46,12 +46,12 @@ export default function UsersClient() {
               <tr className="text-left border-b border-ring/60">
                 <th className="py-1.5 font-medium text-muted-foreground">Usuario</th>
                 <th className="py-1.5 font-medium text-muted-foreground">Rol</th>
-                <th className="py-1.5 font-medium text-muted-foreground">Sesión</th>
+                <th className="pl-1.5 py-1.5 font-medium text-muted-foreground">Sesión</th>
                 <th className="py-1.5 font-medium text-muted-foreground text-right">
                   <span className="hidden md:inline">Acciones</span>
                   <Tooltip>
                     <TooltipTrigger className="md:hidden inline-flex">
-                      <Settings className="size-4 text-muted-foreground" />
+                      <Settings className="mr-0.5 size-4 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>Acciones</TooltipContent>
                   </Tooltip>
@@ -75,7 +75,7 @@ export default function UsersClient() {
                         <TooltipContent>{u.roleName}</TooltipContent>
                       </Tooltip>
                     </td>
-                    <td className="py-1.5 text-muted-foreground">{u.sessionName ?? "-"}</td>
+                    <td className="pl-1.5 py-1.5 text-muted-foreground">{u.sessionName ?? "-"}</td>
                     <td className="py-1.5 text-right">
                       <UserRowMenu user={u} />
                     </td>

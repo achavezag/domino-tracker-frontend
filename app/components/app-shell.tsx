@@ -23,7 +23,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Header />
           </div>
           <main className="flex-1 overflow-hidden">
-            <div className="px-2 pt-2 h-full overflow-auto">
+            <div className="px-2 pt-2 pb-8 h-full overflow-auto">
               {children}
             </div>
           </main>
