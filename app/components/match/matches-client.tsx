@@ -9,12 +9,16 @@ import MatchesFilters from './matches-filters';
 import { toast } from 'sonner';
 import { CheckSquare, Plus, Save, Square } from 'lucide-react';
 import { useSeasonStore } from '@/lib/store/season-store';
+import { useAuthStore } from '@/lib/store/auth-store';
 import { LoadingState, Spinner } from '@/components/ui/spinner';
 
 export default function MatchesClient() {
   const [filters, setFilters] = useState<MatchFilters>({});
   const [selectionMode, setSelectionMode] = useState<boolean>(false);
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
+
+  const role = useAuthStore((s) => s.role);
+  const canManage = role === "session_admin" || role === "super_admin";
 
   const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
 
@@ -94,7 +98,7 @@ export default function MatchesClient() {
             teams={teams}
           />
         
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 px-0.5">
             {visibleMatches.map((m) => (
               <MatchCard 
                 key={m.id} 
@@ -109,6 +113,7 @@ export default function MatchesClient() {
         </div>      
       </div>
 
+      {canManage && (
       <div className="fixed bottom-6 right-6 flex flex-col gap-3 items-end">
         {/* SELECT ALL */}
         {selectionMode && (
@@ -161,6 +166,7 @@ export default function MatchesClient() {
           />
         </button>
       </div>
+      )}
     </>
   );
 }

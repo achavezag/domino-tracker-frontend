@@ -97,7 +97,7 @@ export default function TeamsClient() {
   return (
     <div className="flex flex-col">
 
-      <div className="flex items-center justify-center mb-2 py-4 border-b border-ring md:justify-end md:pr-20">
+      <div className="sticky top-0 z-10 md:-ml-0.5 -mt-0.5 bg-white py-3 flex items-center justify-center mb-2 border-b border-ring md:justify-end md:pr-16">
         <ViewModeSwitch />
       </div>
 

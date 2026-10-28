@@ -1,7 +1,9 @@
 'use client';
 
+import { Eraser } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 import {
   Select,
@@ -25,7 +27,7 @@ export default function MatchesFilters({
   teams,
 }: Props) {
   return (
-    <div className="flex flex-col md:flex-row md:justify-between items-center gap-2 md:gap-3 px-2 md:px-3 py-2 border border-ring rounded-xl">
+    <div className="sticky top-0 z-10 -mt-2 bg-white pt-2 pb-2 flex flex-col md:flex-row md:justify-between items-center gap-2 md:gap-3 px-2 md:px-3 border-b border-ring">
 
       <div className="flex w-full items-center justify-between md:justify-start gap-2">
         {/* DATE FROM */}
@@ -160,11 +162,24 @@ export default function MatchesFilters({
         {/* CLEAR */}
         <Button
           variant="outline"
-          className="w-32 ml-auto"
+          className="hidden w-32 ml-auto md:inline-flex"
           onClick={() => setFilters({})}
         >
           Limpiar
         </Button>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-10 px-2 ml-auto md:hidden"
+              onClick={() => setFilters({})}
+            >
+              <Eraser className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Limpiar</TooltipContent>
+        </Tooltip>
       </div>
 
     </div>

@@ -5,9 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 import { HeadToHeadStats, Player, PlayerStats } from '@/lib/types/types';
 import PlayerCard from './player-card';
 import { useState } from 'react';
+import { Eraser } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { LoadingState } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSeasonStore } from '@/lib/store/season-store';
 import ViewModeSwitch from '../view-mode-switch';
 
@@ -78,10 +80,10 @@ export default function PlayersClient() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-2 border-b border-ring p-4">
+      <div className="sticky top-0 z-10 -mt-0.5 bg-white flex items-center justify-between mb-2 px-1 md:static md:mt-0 md:pt-0">
 
-        {/* MODES */}
-        <div className="flex w-full flex-col items-center gap-3 md:flex-row md:justify-between">
+        {/* MODES — DESKTOP */}
+        <div className="hidden w-full items-center gap-2 justify-between border-b border-ring p-3 md:flex">
 
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -90,7 +92,7 @@ export default function PlayersClient() {
                 checked={mode === "all"}
                 onChange={() => setMode("all")}
               />
-              <span className="text-sm">Todos</span>
+              <span className="text-sm text-shadow-2xs">Todos</span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -99,13 +101,13 @@ export default function PlayersClient() {
                 checked={mode === "headtohead"}
                 onChange={() => setMode("headtohead")}
               />
-              <span className="text-sm">Cara a cara</span>
+              <span className="text-sm text-shadow-2xs">Cara a cara</span>
             </label>
           </div>
 
           {/* SELECTS */}
           {mode === "headtohead" && (
-            <div className="flex flex-col items-center gap-2 md:h-6 md:flex-row md:gap-4">
+            <div className="flex h-6 items-center gap-4">
 
               {/* PLAYER 1 */}
               <Select
@@ -163,13 +165,111 @@ export default function PlayersClient() {
 
             </div>
           )}
-          
-          <div className="md:pr-20">
+
+          <div className="pr-20">
             <ViewModeSwitch />
           </div>
 
-        </div>        
-      </div>  
+        </div>
+
+        {/* MODES — MOBILE */}
+        <div className="flex w-full flex-col gap-2 border-b border-ring p-3 md:hidden">
+
+          {/* ROW 1: RADIOS + SWITCH */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  checked={mode === "all"}
+                  onChange={() => setMode("all")}
+                />
+                <span className="text-sm text-shadow-2xs">Todos</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  checked={mode === "headtohead"}
+                  onChange={() => setMode("headtohead")}
+                />
+                <span className="text-sm text-shadow-2xs">Cara a cara</span>
+              </label>
+            </div>
+
+            <ViewModeSwitch />
+          </div>
+
+          {/* ROW 2: SELECTS + LIMPIAR */}
+          {mode === "headtohead" && (
+            <div className="flex items-center justify-between gap-2">
+
+              <div className="flex gap-1 items-center justify-between w-11/12">
+              {/* PLAYER 1 */}
+              <Select
+                value={player1Id}
+                onValueChange={setPlayer1Id}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Jugador 1" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {players.map((p) => (
+                    <SelectItem
+                      key={p.id}
+                      value={p.id}
+                      disabled={p.id === player2Id}
+                    >
+                      {p.nickname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* PLAYER 2 */}
+              <Select
+                value={player2Id}
+                onValueChange={setPlayer2Id}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Jugador 2" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {players.map((p) => (
+                    <SelectItem
+                      key={p.id}
+                      value={p.id}
+                      disabled={p.id === player1Id}
+                    >
+                      {p.nickname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              </div>
+
+              {/* LIMPIAR */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-10 px-2 border border-ring"
+                    onClick={handleClear}
+                    disabled={!player1Id && !player2Id}
+                  >
+                    <Eraser className="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Limpiar</TooltipContent>
+              </Tooltip>
+
+            </div>
+          )}
+
+        </div>
+      </div>
 
       {mode === "all" && (
         <div className='grid justify-items-center gap-6 pr-2 pb-2 md:grid-cols-3 md:justify-items-stretch lg:grid-cols-4'>

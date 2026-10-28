@@ -25,8 +25,8 @@ export default function UsersClient() {
   });
 
   return (
-    <div className="p-4">
-      <div className="border border-ring pb-2 pt-4 px-3 rounded flex flex-col gap-4 max-w-2xl">
+    <div className="py-2">
+      <div className="border border-ring pb-2 pt-4 px-2 rounded flex flex-col gap-4 max-w-2xl">
         <div className="flex items-center justify-between rounded pb-1 pt-2 px-1 bg-custom-hover/50">
           <h2 className="font-semibold mb-1">Usuarios</h2>
           <button

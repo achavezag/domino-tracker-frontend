@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { ChevronDown } from 'lucide-react';
 import { getWarById } from '@/lib/api/api';
 import { WarListItem, WarDetail } from '@/lib/types/types';
 import { formatDate } from '@/lib/helpers';
@@ -18,22 +19,32 @@ export default function WarItem({ war }: { war: WarListItem }) {
   });
 
   return (
-    <div className="border rounded border-ring">
+    <div className="border rounded-t-sm border-ring">
 
       {/* HEADER */}
       <div
-        className="px-2 md:px-3 py-2 cursor-pointer bg-muted flex justify-between items-center border-b border-ring"
+        className="px-2 md:px-3 py-2 cursor-pointer bg-muted flex justify-between items-center border-b border-ring rounded-t-md"
         onClick={() => setOpen(!open)}
       >
         <span className="font-semibold text-sm text-custom-date">
           {formatDate(war.date)}
         </span>
 
-        <span className="flex w-full text-sm font-medium pl-4 md:justify-center md:pr-12">
-          {war.teamAName} vs {war.teamBName}
-        </span>
+        <div className="flex w-full gap-1.5 text-sm items-center justify-center pr-4 md:pr-10">
+          <p className="font-semibold">
+            {war.teamAName}
+          </p>
+          <span className="text-muted-foreground"> vs </span> 
+          <p className="font-semibold">
+            {war.teamBName}
+          </p>
+        </div>
 
-        <span>{open ? "▲" : "▼"}</span>
+        <ChevronDown
+          className={`size-4 shrink-0 text-muted-foreground transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
       </div>
 
       {/* CONTENT */}

@@ -12,11 +12,11 @@ export default function HomeClient() {
     <div className="w-full max-w-11/12 p-1 md:p-3">
 
       {/* TABS */}
-      <div className="flex flex-col items-center gap-3 mb-6 md:flex-row md:items-center md:justify-between">
+      <div className="sticky top-0 z-10 -mt-3 bg-white pt-3 flex items-center gap-3 mb-4 justify-between border-b border-ring pb-2 md:static md:mt-0 md:pt-0">
 
-        <div className="flex justify-center gap-2 md:justify-start">
+        <div className="flex gap-2">
           <button
-            className={`w-32 px-4 py-2 rounded-lg border ${
+            className={`w24 md:w-32 px-4 py-2 rounded-lg border ${
               tab === "players"
                 ? "bg-custom-hover text-foreground font-semibold text-sm"
                 : "text-muted-foreground text-sm"
@@ -27,7 +27,7 @@ export default function HomeClient() {
           </button>
 
           <button
-            className={`w-32 px-4 py-2 rounded-lg border ${
+            className={`w-24 md:w-32 px-4 py-2 rounded-lg border ${
               tab === "teams"
                 ? "bg-custom-hover text-foreground font-semibold text-sm"
                 : "text-muted-foreground text-sm"

@@ -21,7 +21,7 @@ export default function WarsClient() {
     <div className="flex flex-col gap-2">
 
       {/* HEADER */}
-      <div className="flex items-center justify-center md:justify-start">
+      <div className="sticky top-0 z-10 -mt-0.5 bg-white py-1.5 md:py-2 flex items-center justify-center md:justify-start border-b border-ring">
         <h1 className="text-lg md:text-xl font-semibold text-shadow-2xs">Guerras</h1>
       </div>
 
