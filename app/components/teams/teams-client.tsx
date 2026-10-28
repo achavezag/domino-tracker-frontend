@@ -19,6 +19,8 @@ import {
 import { useSeasonStore } from '@/lib/store/season-store';
 import { LoadingState } from '@/components/ui/spinner';
 import ViewModeSwitch from '../view-mode-switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Eraser } from 'lucide-react';
 
 type Filters = {
   opponentTeamId?: string;
@@ -94,14 +96,166 @@ export default function TeamsClient() {
     return <LoadingState />;
   }
 
+  const renderFilters = () => (
+    <>
+      <div className="flex w-full items-center justify-between md:justify-start md:gap-2">
+        <span className="pr-2 whitespace-nowrap text-sm">
+          {selectedTeam!.player1.nickname} / {selectedTeam!.player2.nickname}
+        </span>
+
+        {/* SCORE */}
+        <span className="font-bold">{winsA}</span>
+
+        <span>-</span>
+
+        <span className="font-bold pr-2">{winsB}</span>
+
+        {/* VS TEAM */}
+        <Select
+          value={filters.opponentTeamId ?? "all"}
+          onValueChange={(value) =>
+            setFilters((prev) => ({
+              ...prev,
+              opponentTeamId:
+                value === "all"
+                  ? undefined
+                  : value,
+            }))
+          }
+        >
+          <SelectTrigger className="w-40 md:w-56">
+            <SelectValue placeholder="Global" />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="all">
+              Global
+            </SelectItem>
+
+            {teams
+              .filter((t) => t.id !== selectedTeamId)
+              .map((t) => (
+                <SelectItem
+                  key={t.id}
+                  value={t.id}
+                >
+                  {t.player1.nickname} / {t.player2.nickname}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex w-full justify-between md:justify-center gap-2 md:gap-6">
+        {/* FROM DATE */}
+        <Input
+          type="date"
+          className="w-40 md:w-fit text-sm"
+          value={filters.fromDate ?? ""}
+          onChange={(e) =>
+            setFilters((prev) => ({
+              ...prev,
+              fromDate: e.target.value || undefined,
+            }))
+          }
+        />
+
+        {/* TO DATE */}
+        <Input
+          type="date"
+          className="w-40 md:w-fit text-sm"
+          value={filters.toDate ?? ""}
+          onChange={(e) =>
+            setFilters((prev) => ({
+              ...prev,
+              toDate: e.target.value || undefined,
+            }))
+          }
+        />
+      </div>
+
+      <div className="flex w-full justify-between gap-2">
+        {/* TYPE */}
+        <Select
+          value={filters.type ?? "all"}
+          onValueChange={(value) =>
+            setFilters((prev) => ({
+              ...prev,
+              type:
+                value === "all"
+                  ? undefined
+                  : (value as MatchType),
+            }))
+          }
+        >
+          <SelectTrigger className="w-40 md:w-48">
+            <SelectValue placeholder="Tipo" />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="all">
+              Partidos (todos)
+            </SelectItem>
+
+            <SelectItem value="Fixed">
+              Fijo
+            </SelectItem>
+
+            <SelectItem value="Rotating">
+              Rotativo
+            </SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* CLEAR */}
+        <Button
+          variant="outline"
+          className="hidden w-32 ml-auto md:inline-flex"
+          onClick={() =>
+            setFilters({
+              opponentTeamId: undefined,
+              type: undefined,
+              fromDate: undefined,
+              toDate: undefined,
+            })
+          }
+        >
+          Limpiar
+        </Button>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-10 px-2 ml-auto md:hidden"
+              onClick={() => setFilters({})}
+            >
+              <Eraser className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Limpiar</TooltipContent>
+        </Tooltip>
+      </div>
+    </>
+  );
+
   return (
     <div className="flex flex-col">
 
-      <div className="sticky top-0 z-10 md:-ml-0.5 -mt-0.5 bg-white py-3 flex items-center justify-center mb-2 border-b border-ring md:justify-end md:pr-16">
-        <ViewModeSwitch />
+      <div className="sticky top-0 z-10 flex flex-col bg-white md:-ml-0.5 -mt-0.5">
+        <div className="py-3 flex items-center justify-center border-b border-ring md:justify-end md:pr-16">
+          <ViewModeSwitch />
+        </div>
+
+        {/* FILTROS — MOBILE (fijos debajo del ViewModeSwitch) */}
+        {selectedTeamId && selectedTeam && (
+          <div className="flex flex-col w-full items-center gap-3 px-1 py-2 border-b border-ring md:hidden">
+            {renderFilters()}
+          </div>
+        )}
       </div>
 
-      <div className="flex flex-col items-center md:w-full md:items-stretch pb-2">
+      <div className="flex flex-col items-center md:w-full md:items-stretch pb-2 mt-2">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
           {/* TEAMS */}
@@ -141,136 +295,11 @@ export default function TeamsClient() {
 
         {/* HISTORIAL + FILTROS */}
         {selectedTeamId && selectedTeam && (
-          <div className="mt-6 flex flex-col gap-4 md:w-full">
+          <div className="mt-2 md:mt-4 flex flex-col gap-2 w-full">
 
-            {/* HEADER + FILTERS */}
-            <div className="flex flex-col md:flex-row w-full items-center justify-between gap-3 px-1 py-2 border border-ring rounded-xl">
-                    
-              <div className="flex w-full items-center justify-between md:justify-start md:gap-2">
-                <span className="pr-2 whitespace-nowrap text-sm">
-                  {selectedTeam.player1.nickname} / {selectedTeam.player2.nickname}
-                </span>
-
-                {/* SCORE */}
-                <span className="font-bold">{winsA}</span>
-
-                <span>-</span>
-
-                <span className="font-bold pr-2">{winsB}</span>
-
-                {/* VS TEAM */}
-                <Select
-                  value={filters.opponentTeamId ?? "all"}
-                  onValueChange={(value) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      opponentTeamId:
-                        value === "all"
-                          ? undefined
-                          : value,
-                    }))
-                  }
-                >
-                  <SelectTrigger className="w-40 md:w-56">
-                    <SelectValue placeholder="Global" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    <SelectItem value="all">
-                      Global
-                    </SelectItem>
-
-                    {teams
-                      .filter((t) => t.id !== selectedTeamId)
-                      .map((t) => (
-                        <SelectItem
-                          key={t.id}
-                          value={t.id}
-                        >
-                          {t.player1.nickname} / {t.player2.nickname}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex w-full justify-between md:justify-center gap-2 md:gap-6"> 
-                {/* FROM DATE */}
-                <Input
-                  type="date"
-                  className="w-40 md:w-fit text-sm"
-                  value={filters.fromDate ?? ""}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      fromDate: e.target.value || undefined,
-                    }))
-                  }
-                />
-
-                {/* TO DATE */}
-                <Input
-                  type="date"
-                  className="w-40 md:w-fit text-sm"
-                  value={filters.toDate ?? ""}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      toDate: e.target.value || undefined,
-                    }))
-                  }
-                />                
-              </div>              
-
-              <div className="flex w-full justify-between gap-2">
-                {/* TYPE */}
-                <Select
-                  value={filters.type ?? "all"}
-                  onValueChange={(value) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      type:
-                        value === "all"
-                          ? undefined
-                          : (value as MatchType),
-                    }))
-                  }
-                >
-                  <SelectTrigger className="w-40 md:w-48">
-                    <SelectValue placeholder="Tipo" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    <SelectItem value="all">
-                      Partidos (todos)
-                    </SelectItem>
-
-                    <SelectItem value="Fixed">
-                      Fijo
-                    </SelectItem>
-
-                    <SelectItem value="Rotating">
-                      Rotativo
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* CLEAR */}
-                <Button
-                  variant="outline"
-                  className="w-32"
-                  onClick={() =>
-                    setFilters({
-                      opponentTeamId: undefined,
-                      type: undefined,
-                      fromDate: undefined,
-                      toDate: undefined,
-                    })
-                  }
-                >
-                  Limpiar
-                </Button>
-              </div>
+            {/* HEADER + FILTERS — DESKTOP (en móvil se muestran fijos arriba) */}
+            <div className="hidden md:flex md:flex-row w-full items-center justify-between gap-3 px-1 py-2 border-y border-ring">
+              {renderFilters()}
             </div>
 
             {/* MATCHES */}
@@ -279,7 +308,7 @@ export default function TeamsClient() {
             ) : matches.length === 0 ? (
               <span>No hay partidos</span>
             ) : (
-              <div className="grid grid.cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {matches.map((m) => (
                   <MatchCard key={m.id} match={m} />
                 ))}

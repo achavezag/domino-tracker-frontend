@@ -18,7 +18,7 @@ export default function WarsClient() {
   if (isLoading) return <LoadingState />;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 pb-3">
 
       {/* HEADER */}
       <div className="sticky top-0 z-10 -mt-0.5 bg-white py-1.5 md:py-2 flex items-center justify-center md:justify-start border-b border-ring">

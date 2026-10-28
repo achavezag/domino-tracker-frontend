@@ -8,6 +8,7 @@ import {
   SheetContent,
   SheetTrigger,
   SheetTitle,
+  SheetDescription,
 } from '@/components/ui/sheet';
 import Sidebar from './Sidebar';
 
@@ -21,6 +22,7 @@ export default function HeaderImage() {
         alt="header"
         loading="eager"
         fill
+        sizes="100vw"
         className="hidden object-fill md:block"
       />
       <Image
@@ -28,6 +30,7 @@ export default function HeaderImage() {
         alt="header"
         loading="eager"
         fill
+        sizes="100vw"
         className="block object-fill md:hidden"
       />
 
@@ -43,6 +46,9 @@ export default function HeaderImage() {
         </SheetTrigger>
         <SheetContent side="right" className="w-4/5 p-0">
           <SheetTitle className="sr-only">Menú</SheetTitle>
+          <SheetDescription className="sr-only">
+            Menú de navegación principal
+          </SheetDescription>
           <div className="p-4 h-full">
             <Sidebar onNavigate={() => setOpen(false)} />
           </div>

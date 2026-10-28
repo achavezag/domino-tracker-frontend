@@ -8,7 +8,7 @@ import { Session } from '@/lib/types/types';
 import { useSessionStore } from '@/lib/store/session-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Spinner } from '@/components/ui/spinner';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -141,6 +141,9 @@ export default function SessionSelector() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nueva sesión</DialogTitle>
+            <DialogDescription className="sr-only">
+              Formulario para crear una nueva sesión
+            </DialogDescription>
           </DialogHeader>
 
           <Input
