@@ -114,7 +114,7 @@ export default function SessionSelector() {
         <button
           type="button"
           onClick={() => setCreateOpen(true)}
-          className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground"
+          className="rounded-full p-1 cursor-pointer text-custom-nick hover:bg-custom-hover/50 hover:text-foreground"
         >
           <Plus className="size-4" />
         </button>

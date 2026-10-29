@@ -27,12 +27,12 @@ export default function UsersClient() {
   return (
     <div className="py-2">
       <div className="border border-ring pb-2 pt-4 px-2 rounded flex flex-col gap-4 max-w-2xl">
-        <div className="flex items-center justify-between rounded pb-1 pt-2 px-1 bg-custom-hover/50">
-          <h2 className="font-semibold mb-1">Usuarios</h2>
+        <div className="flex items-center justify-between rounded p-2 bg-custom-hover/50">
+          <h2 className="font-semibold">Usuarios</h2>
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground"
+            className="rounded-full cursor-pointer text-custom-nick border border-custom-nick hover:border-foreground hover:text-foreground"
           >
             <Plus className="size-4" />
           </button>

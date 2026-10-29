@@ -119,14 +119,14 @@ export default function MatchesClient() {
         {selectionMode && (
           <button
             onClick={toggleSelectAll}
-            className="h-12 w-12 rounded-full bg-background border shadow-lg flex items-center justify-center hover:scale-105 transition"
+            className="h-10 w-10 rounded-full bg-background/90 border shadow-lg flex items-center justify-center hover:scale-105 transition"
           >
             {allSelected ? (
-              <CheckSquare className="w-5 h-5" />
+              <CheckSquare className="w-4 h-4" />
             ) : someSelected ? (
-              <Square className="w-5 h-5 opacity-50" />
+              <Square className="w-4 h-4 opacity-40" />
             ) : (
-              <Square className="w-5 h-5" />
+              <Square className="w-4 h-4" />
             )}
           </button>
         )}
@@ -136,7 +136,7 @@ export default function MatchesClient() {
           <button
             onClick={() => createWarMutation.mutate(selectedMatches)}
             disabled={selectedMatches.length === 0 || createWarMutation.isPending}
-            className="h-14 w-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center hover:scale-105 transition disabled:opacity-50"
+            className="h-12 w-12 rounded-full bg-custom-fixed/80 text-background shadow-xl border border-ring flex items-center justify-center hover:scale-105 transition disabled:opacity-75"
           >
             {createWarMutation.isPending ? (
               <Spinner className="size-6" />
@@ -157,7 +157,7 @@ export default function MatchesClient() {
               clearSelection();
             }
           }}
-          className="h-14 w-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center hover:scale-105 transition"
+          className="h-12 w-12 rounded-full bg-custom-fixed text-background border border-ring shadow-xl flex items-center justify-center hover:scale-105 transition"
         >
           <Plus
             className={`w-6 h-6 transition-transform ${

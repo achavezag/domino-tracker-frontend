@@ -19,7 +19,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <Sidebar />
         </aside>
         <div className="flex flex-col flex-1">
-          <div className="h-25 shrink-0 border-b bg-white">
+          <div className="h-25 shrink-0 border-b bg-background">
             <Header />
           </div>
           <main className="flex-1 overflow-hidden pb-6 md:pb-2">

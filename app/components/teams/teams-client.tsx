@@ -242,7 +242,7 @@ export default function TeamsClient() {
   return (
     <div className="flex flex-col">
 
-      <div className="sticky top-0 z-10 flex flex-col bg-white md:-ml-0.5 -mt-0.5">
+      <div className="sticky top-0 z-10 flex flex-col bg-background md:-ml-0.5 -mt-0.5">
         <div className="py-3 flex items-center justify-center border-b border-ring md:justify-end md:pr-16">
           <ViewModeSwitch />
         </div>

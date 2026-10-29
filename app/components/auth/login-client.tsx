@@ -66,7 +66,7 @@ export default function LoginClient() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-zinc-50 px-4">
+    <div className="flex h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="font-semibold text-shadow-2xs">Domino</CardTitle>

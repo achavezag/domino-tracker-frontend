@@ -80,17 +80,18 @@ export default function PlayersClient() {
 
   return (
     <>
-      <div className="sticky top-0 z-10 -mt-0.5 bg-white flex items-center justify-between mb-2 px-1 md:static md:mt-0 md:pt-0">
+      <div className="sticky top-0 z-10 -mt-0.5 bg-background flex items-center justify-between mb-2 px-1 md:static md:mt-0 md:pt-0">
 
         {/* MODES — DESKTOP */}
         <div className="hidden w-full items-center gap-2 justify-between border-b border-ring p-3 md:flex">
 
-          <div className="flex items-center gap-4">
+          <div className="flex h-6 items-center gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 checked={mode === "all"}
                 onChange={() => setMode("all")}
+                className="accent-custom-win"
               />
               <span className="text-sm text-shadow-2xs">Todos</span>
             </label>
@@ -100,6 +101,7 @@ export default function PlayersClient() {
                 type="radio"
                 checked={mode === "headtohead"}
                 onChange={() => setMode("headtohead")}
+                className="accent-custom-win"
               />
               <span className="text-sm text-shadow-2xs">Cara a cara</span>
             </label>
@@ -183,6 +185,7 @@ export default function PlayersClient() {
                   type="radio"
                   checked={mode === "all"}
                   onChange={() => setMode("all")}
+                  className="accent-custom-win"
                 />
                 <span className="text-sm text-shadow-2xs">Todos</span>
               </label>
@@ -192,6 +195,7 @@ export default function PlayersClient() {
                   type="radio"
                   checked={mode === "headtohead"}
                   onChange={() => setMode("headtohead")}
+                  className="accent-custom-win"
                 />
                 <span className="text-sm text-shadow-2xs">Cara a cara</span>
               </label>

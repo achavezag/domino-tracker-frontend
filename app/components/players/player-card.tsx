@@ -51,8 +51,8 @@ export default function PlayerCard({ player, stats }: Props) {
         </Avatar>
 
         {/* Info */}
-        <div className="flex text-shadow-md justify-center">
-          <div className="font-semibold">{player.name}</div>
+        <div className="flex justify-center">
+          <div className="font-medium">{player.name}</div>
           
             {player.nickname !== player.name && (
               <div className="text-sm text-custom-nick font-medium pl-1">
@@ -65,7 +65,7 @@ export default function PlayerCard({ player, stats }: Props) {
         <div className="flex flex-col w-full">
 
           <div>
-            <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Totales</div>
+            <div className="flex w-full items-center justify-center font-medium pb-2">Totales</div>
             <div className="flex w-full gap-4 text-sm justify-between px-4">
               <div className="text-center">
                 <div className="text-xs font-semibold text-custom-played">J</div>
@@ -93,7 +93,7 @@ export default function PlayerCard({ player, stats }: Props) {
           {viewMode !== "compact" && (
           <>
             <div className="pt-4">
-              <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Guerras</div>
+              <div className="flex w-full items-center justify-center font-medium pb-2">Guerras</div>
               <div className="flex w-full gap-4 text-sm justify-between px-4">
                 <div className="text-center">
                   <div className="text-xs font-semibold text-custom-played">J</div>
@@ -119,7 +119,7 @@ export default function PlayerCard({ player, stats }: Props) {
             </div>
 
             <div className="pt-4">
-              <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Partidos fijos</div>
+              <div className="flex w-full items-center justify-center font-medium pb-2">Partidos fijos</div>
               <div className="flex w-full gap-4 text-sm justify-between px-4">
                 <div className="text-center">
                   <div className="text-xs font-semibold text-custom-played">J</div>
@@ -146,7 +146,7 @@ export default function PlayerCard({ player, stats }: Props) {
 
             
             <div className="pt-4">
-              <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Partidos E/S</div>
+              <div className="flex w-full items-center justify-center font-medium pb-2">Partidos E/S</div>
               <div className="flex w-full gap-4 text-sm justify-between px-4">
                 <div className="text-center">
                   <div className="text-xs font-semibold text-custom-played">J</div>

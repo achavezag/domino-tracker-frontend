@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Home, User, Users, Swords, Settings, Play, ShieldUser, LogOut } from 'lucide-react';
 import SeasonSelector from './season-selector';
 import SessionSelector from './session-selector';
+import ThemeSwitch from './theme-switch';
 import { useAuthStore } from '@/lib/store/auth-store';
 
 function DominoTileIcon({ className }: { className?: string }) {
@@ -130,6 +131,8 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <span className="truncate text-xs text-muted-foreground" title={username ?? undefined}>
           {username}
         </span>
+
+        <ThemeSwitch />
 
         <button
           type="button"

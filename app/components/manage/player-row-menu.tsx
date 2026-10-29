@@ -50,7 +50,7 @@ export default function PlayerRowMenu({
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground">
+        <DropdownMenuTrigger className="rounded-full p-1 cursor-pointer text-muted-foreground hover:bg-ring/10 hover:text-foreground">
           {statsLoading ? (
             <Spinner />
           ) : (

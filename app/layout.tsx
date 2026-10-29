@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, Figtree } from 'next/font/google';
 import './globals.css';
 import QueryProvider from '@/providers/query-provider';
 import AppShell from './components/app-shell';
+import ThemeScript from './components/theme-script';
+import ThemeSystemSync from './components/theme-system-sync';
 import { cn } from "@/lib/utils";
 import { Toaster } from 'sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -34,7 +36,11 @@ export default function RootLayout({
       lang="en"
       className={cn(geistSans.variable, geistMono.variable, "font-sans", figtree.variable)}
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="antialiased h-screen overflow-hidden">
+        <ThemeSystemSync />
         <QueryProvider>
           <TooltipProvider>
             <AppShell>{children}</AppShell>

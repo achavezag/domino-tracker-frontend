@@ -87,12 +87,12 @@ export default function ManageClient() {
 
         {/* SEASONS */}
         <div className="border border-ring pb-2 pt-4 px-3 rounded flex flex-col gap-3 max-w-md">
-          <div className="flex items-center justify-between rounded pb-1 pt-2 px-1 bg-custom-hover/50">
-            <h2 className="font-semibold mb-1">Temporadas</h2>
+          <div className="flex items-center justify-between rounded p-2 bg-custom-hover/50">
+            <h2 className="font-semibold">Temporadas</h2>
             <button
               type="button"
               onClick={() => setAddSeasonOpen(true)}
-              className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground"
+              className="rounded-full cursor-pointer text-custom-nick border border-custom-nick hover:border-foreground hover:text-foreground"
             >
               <Plus className="size-4" />
             </button>
@@ -106,7 +106,7 @@ export default function ManageClient() {
                   Temporada <span className="font-semibold">{s.alias}</span>
                 </p>
                 <span className="text-muted-foreground text-sm">{formatDate(s.startDate)}</span>
-                <span className="text-muted-foreground text-sm">{s.endDate !== null ? formatDate(s.endDate) : "-"}</span>
+                <span className="text-muted-foreground text-sm pr-1 md:pr-2">{s.endDate !== null ? formatDate(s.endDate) : "-"}</span>
               </div>
               <SeasonRowMenu
                 season={s}
@@ -127,12 +127,12 @@ export default function ManageClient() {
 
         {/* EDIT PLAYERS */}
         <div className="border border-ring pb-2 pt-4 px-3 rounded flex flex-col gap-4 max-w-md">
-          <div className="flex items-center justify-between rounded pb-1 pt-2 px-1 bg-custom-hover/50">
-            <h2 className="font-semibold mb-1">Jugadores</h2>
+          <div className="flex items-center justify-between rounded p-2 bg-custom-hover/50">
+            <h2 className="font-semibold">Jugadores</h2>
             <button
               type="button"
               onClick={() => setAddPlayerOpen(true)}
-              className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground"
+              className="rounded-full cursor-pointer text-custom-nick border border-custom-nick hover:border-foreground hover:text-foreground"
             >
               <Plus className="size-4" />
             </button>
@@ -179,12 +179,12 @@ export default function ManageClient() {
 
       <div className="flex flex-col w-full p-2 border border-ring rounded md:px-4 md:w-2/3">
         <div className="flex flex-col md:flex-row md:justify-between gap-3 pt-2 items-center mb-4">
-          <div className="flex w-full items-center justify-between rounded pb-2 pt-2 px-1 bg-custom-hover/50 md:w-1/2">
+          <div className="flex w-full items-center justify-between rounded p-2 bg-custom-hover/50 md:w-1/2">
             <h2 className="font-semibold">Equipos</h2>
             <button
               type="button"
               onClick={() => setAddTeamOpen(true)}
-              className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground"
+              className="rounded-full cursor-pointer text-custom-nick border border-custom-nick hover:border-foreground hover:text-foreground"
             >
               <Plus className="size-4" />
             </button>

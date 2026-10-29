@@ -27,7 +27,7 @@ export default function MatchesFilters({
   teams,
 }: Props) {
   return (
-    <div className="sticky top-0 z-10 -mt-2 bg-white pt-2 pb-2 flex flex-col md:flex-row md:justify-between items-center gap-2 md:gap-3 px-2 md:px-3 border-b border-ring">
+    <div className="sticky top-0 z-10 -mt-2 bg-background pt-2 pb-2 flex flex-col md:flex-row md:justify-between items-center gap-2 md:gap-3 px-2 md:px-3 border-b border-ring">
 
       <div className="flex w-full items-center justify-between md:justify-start gap-2">
         {/* DATE FROM */}

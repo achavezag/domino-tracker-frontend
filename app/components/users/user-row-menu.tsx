@@ -39,7 +39,7 @@ export default function UserRowMenu({ user }: Props) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="rounded-full p-1 text-muted-foreground hover:bg-ring/10 hover:text-foreground">
+        <DropdownMenuTrigger className="rounded-full p-1 cursor-pointer text-muted-foreground hover:bg-ring/10 hover:text-foreground">
           <MoreVertical className="size-4" />
         </DropdownMenuTrigger>
 

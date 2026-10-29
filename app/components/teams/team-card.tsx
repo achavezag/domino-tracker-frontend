@@ -29,13 +29,13 @@ export default function TeamCard({ team, stats, onClick, selected }: Props) {
 
   return (
     <Card className={`w-72 cursor-pointer transition border border-ring py-3 ${
-        selected ? "bg-custom-hover/50" : "hover:bg-custom-hover/25"
+        selected ? "bg-custom-hover/15" : "hover:bg-custom-hover/20"
       }`} onClick={onClick}
     >
       <CardContent className="px-4 flex flex-col gap-4">
 
         {/* PLAYERS */}
-        <div className="flex justify-between font-semibold border-b pb-2">
+        <div className="flex justify-between font-medium border-b pb-2">
           <span>{team.player1.nickname}</span>
           <span>{team.player2.nickname}</span>
         </div>
@@ -43,7 +43,7 @@ export default function TeamCard({ team, stats, onClick, selected }: Props) {
         <div className="flex flex-col w-full">
 
           <div>
-            <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Totales</div>
+            <div className="flex w-full items-center justify-center font-medium pb-2">Totales</div>
             <div className="flex w-full gap-4 text-sm justify-between px-4">
               <div className="text-center">
                 <div className="text-xs font-semibold text-custom-played">J</div>
@@ -71,7 +71,7 @@ export default function TeamCard({ team, stats, onClick, selected }: Props) {
           {viewMode !== "compact" && (
           <>
             <div className="pt-4">
-              <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Guerras</div>
+              <div className="flex w-full items-center justify-center font-medium pb-2">Guerras</div>
               <div className="flex w-full gap-4 text-sm justify-between px-4">
                 <div className="text-center">
                   <div className="text-xs font-semibold text-custom-played">J</div>
@@ -97,7 +97,7 @@ export default function TeamCard({ team, stats, onClick, selected }: Props) {
             </div>
 
             <div className="pt-4">
-              <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Partidos fijos</div>
+              <div className="flex w-full items-center justify-center font-medium pb-2">Partidos fijos</div>
               <div className="flex w-full gap-4 text-sm justify-between px-4">
                 <div className="text-center">
                   <div className="text-xs font-semibold text-custom-played">J</div>
@@ -123,7 +123,7 @@ export default function TeamCard({ team, stats, onClick, selected }: Props) {
             </div>
 
             <div className="pt-4">
-              <div className="flex w-full items-center justify-center font-medium text-shadow-md pb-2">Partidos E/S</div>
+              <div className="flex w-full items-center justify-center font-medium pb-2">Partidos E/S</div>
               <div className="flex w-full gap-4 text-sm justify-between px-4">
                 <div className="text-center">
                   <div className="text-xs font-semibold text-custom-played">J</div>
