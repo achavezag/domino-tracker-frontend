@@ -24,7 +24,7 @@ export default function HeaderImage() {
           alt="header"
           loading="eager"
           fill
-          sizes="100vw"
+          sizes="(min-width: 768px) 84vw, 0px"
           className="object-fill dark:hidden"
         />
         <Image
@@ -32,7 +32,7 @@ export default function HeaderImage() {
           alt="header"
           loading="eager"
           fill
-          sizes="100vw"
+          sizes="(min-width: 768px) 84vw, 0px"
           className="hidden object-fill dark:block"
         />
       </div>
@@ -44,7 +44,7 @@ export default function HeaderImage() {
           alt="header"
           loading="eager"
           fill
-          sizes="100vw"
+          sizes="(min-width: 768px) 0px, 100vw"
           className="object-fill dark:hidden"
         />
         <Image
@@ -52,7 +52,7 @@ export default function HeaderImage() {
           alt="header"
           loading="eager"
           fill
-          sizes="100vw"
+          sizes="(min-width: 768px) 0px, 100vw"
           className="hidden object-fill dark:block"
         />
       </div>

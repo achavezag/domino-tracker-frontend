@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Home, User, Users, Swords, Settings, Play, ShieldUser, LogOut } from 'lucide-react';
+import { Home, User, Users, Swords, Settings, Play, ShieldUser, LogOut, CalendarDays } from 'lucide-react';
 import SeasonSelector from './season-selector';
 import SessionSelector from './session-selector';
 import ThemeSwitch from './theme-switch';
@@ -88,6 +88,13 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             <Link href="/match" className={linkClass("/match")} onClick={onNavigate}>
               <DominoTileIcon className="size-4" />
               Partidos
+            </Link>
+          </li>
+
+          <li>
+            <Link href="/day" className={linkClass("/day")} onClick={onNavigate}>
+              <CalendarDays className="size-4" />
+              Día de juego
             </Link>
           </li>
 
