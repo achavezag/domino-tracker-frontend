@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 type Props = {
   open: boolean;
@@ -33,6 +34,7 @@ type Props = {
 
 export default function UserDialog({ open, onOpenChange, mode, user }: Props) {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
   const isCreate = mode === "create";
 
   const [username, setUsername] = useState<string>(user?.username ?? "");
@@ -110,6 +112,11 @@ export default function UserDialog({ open, onOpenChange, mode, user }: Props) {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
+
+    if (!isOnline) {
+      toast.error("No hay conexión. Esta acción requiere internet.");
+      return;
+    }
 
     if (isCreate) {
       createMutation.mutate();
@@ -191,7 +198,7 @@ export default function UserDialog({ open, onOpenChange, mode, user }: Props) {
             Cancelar
           </Button>
 
-          <Button className="gap-1.5" disabled={!canSubmit || isPending} onClick={handleSubmit}>
+          <Button className="gap-1.5" disabled={!canSubmit || isPending || !isOnline} onClick={handleSubmit}>
             {isPending && <Spinner />}
             {isCreate ? "Agregar" : "Guardar"}
           </Button>

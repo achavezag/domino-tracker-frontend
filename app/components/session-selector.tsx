@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 export default function SessionSelector() {
   const [open, setOpen] = useState(false);
@@ -20,6 +21,7 @@ export default function SessionSelector() {
   const [newSessionName, setNewSessionName] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
   const router = useRouter();
   const role = useAuthStore((s) => s.role);
   const authSessionName = useAuthStore((s) => s.sessionName);
@@ -165,8 +167,14 @@ export default function SessionSelector() {
 
             <Button
               className="gap-1.5"
-              disabled={!newSessionName.trim() || createSessionMutation.isPending}
-              onClick={() => createSessionMutation.mutate({ name: newSessionName.trim() })}
+              disabled={!newSessionName.trim() || createSessionMutation.isPending || !isOnline}
+              onClick={() => {
+                if (!isOnline) {
+                  toast.error("No hay conexión. Esta acción requiere internet.");
+                  return;
+                }
+                createSessionMutation.mutate({ name: newSessionName.trim() });
+              }}
             >
               {createSessionMutation.isPending && <Spinner />}
               Agregar

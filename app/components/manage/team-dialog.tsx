@@ -22,6 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 type Props = {
   open: boolean;
@@ -39,6 +40,7 @@ export default function TeamDialog({
   teams,
 }: Props) {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
 
   const [player1Id, setPlayer1Id] = useState<string>("");
   const [player2Id, setPlayer2Id] = useState<string>("");
@@ -77,6 +79,11 @@ export default function TeamDialog({
 
   const handleSubmit = () => {
     if (!canSubmit) return;
+
+    if (!isOnline) {
+      toast.error("No hay conexión. Esta acción requiere internet.");
+      return;
+    }
 
     createMutation.mutate({ player1Id, player2Id });
   };
@@ -152,7 +159,7 @@ export default function TeamDialog({
 
           <Button
             className="gap-1.5"
-            disabled={!canSubmit || createMutation.isPending}
+            disabled={!canSubmit || createMutation.isPending || !isOnline}
             onClick={handleSubmit}
           >
             {createMutation.isPending && <Spinner />}

@@ -11,11 +11,13 @@ import { toast } from 'sonner';
 import { formatDate, toDateInputValue } from '@/lib/helpers';
 import { LoadingState, Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 export default function MatchClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
 
   const teamA: Team = JSON.parse(
     searchParams.get("teamA") || "{}"
@@ -147,6 +149,11 @@ export default function MatchClient() {
   };
 
   const handleSaveWar = () => {
+    if (!isOnline) {
+      toast.error("No hay conexión. Esta acción requiere internet.");
+      return;
+    }
+
     saveWarMutation.mutate(allMatchIds);
   };
 
@@ -275,8 +282,13 @@ export default function MatchClient() {
           {/* BUTTON */}
           <Button
             className="h-8 flex items-center justify-center gap-1.5 ml-4"
-            disabled={!pointsA || !pointsB || createMatchMutation.isPending}
+            disabled={!pointsA || !pointsB || createMatchMutation.isPending || !isOnline}
             onClick={() => {
+              if (!isOnline) {
+                toast.error("No hay conexión. Esta acción requiere internet.");
+                return;
+              }
+
               createMatchMutation.mutate({
                 teamAId: teamA.id,
                 teamBId: teamB.id,
@@ -330,7 +342,7 @@ export default function MatchClient() {
               variant="outline"
               className="mt-2 gap-1.5"
               onClick={handleSaveWar}
-              disabled={saveWarMutation.isPending || !canSaveWar}
+              disabled={saveWarMutation.isPending || !canSaveWar || !isOnline}
             >
               {saveWarMutation.isPending && <Spinner />}
               {saveWarMutation.isPending

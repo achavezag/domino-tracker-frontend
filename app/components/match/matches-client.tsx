@@ -11,6 +11,7 @@ import { CheckSquare, Plus, Save, Square } from 'lucide-react';
 import { useSeasonStore } from '@/lib/store/season-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { LoadingState, Spinner } from '@/components/ui/spinner';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 export default function MatchesClient() {
   const [filters, setFilters] = useState<MatchFilters>({});
@@ -19,6 +20,7 @@ export default function MatchesClient() {
 
   const role = useAuthStore((s) => s.role);
   const canManage = role === "session_admin" || role === "super_admin";
+  const isOnline = useOnlineStatus();
 
   const selectedSeasonIds = useSeasonStore((s) => s.selectedSeasonIds);
 
@@ -134,8 +136,14 @@ export default function MatchesClient() {
         {/* SAVE */}
         {selectionMode && (
           <button
-            onClick={() => createWarMutation.mutate(selectedMatches)}
-            disabled={selectedMatches.length === 0 || createWarMutation.isPending}
+            onClick={() => {
+              if (!isOnline) {
+                toast.error("No hay conexión. Esta acción requiere internet.");
+                return;
+              }
+              createWarMutation.mutate(selectedMatches);
+            }}
+            disabled={selectedMatches.length === 0 || createWarMutation.isPending || !isOnline}
             className="h-12 w-12 rounded-full bg-custom-fixed/80 text-background shadow-xl border border-ring flex items-center justify-center hover:scale-105 transition disabled:opacity-75"
           >
             {createWarMutation.isPending ? (

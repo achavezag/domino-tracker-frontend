@@ -20,6 +20,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 type Props = {
   open: boolean;
@@ -30,6 +31,7 @@ type Props = {
 
 export default function PlayerDialog({ open, onOpenChange, mode, player }: Props) {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
 
   const [name, setName] = useState<string>(player?.name ?? "");
   const [nickname, setNickname] = useState<string>(player?.nickname ?? "");
@@ -121,6 +123,11 @@ export default function PlayerDialog({ open, onOpenChange, mode, player }: Props
 
   const handleSubmit = () => {
     if (!canSubmit) return;
+
+    if (!isOnline) {
+      toast.error("No hay conexión. Esta acción requiere internet.");
+      return;
+    }
 
     if (isCreate) {
       createMutation.mutate();
@@ -229,7 +236,7 @@ export default function PlayerDialog({ open, onOpenChange, mode, player }: Props
 
               <Button
                 className="gap-1.5"
-                disabled={!canSubmit || isPending || uploading}
+                disabled={!canSubmit || isPending || uploading || !isOnline}
                 onClick={handleSubmit}
               >
                 {isPending && <Spinner />}

@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 const ROLE_LABELS: Record<Role, string> = {
   super_admin: "Super administrador",
@@ -30,6 +31,7 @@ export default function LoginClient() {
   const token = useAuthStore((s) => s.token);
   const hasHydrated = useAuthStore((s) => s.hasHydrated);
   const setAuth = useAuthStore((s) => s.setAuth);
+  const isOnline = useOnlineStatus();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -56,6 +58,11 @@ export default function LoginClient() {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
+
+    if (!isOnline) {
+      toast.error("No hay conexión. Esta acción requiere internet.");
+      return;
+    }
 
     loginMutation.mutate({
       username: username.trim(),
@@ -127,7 +134,7 @@ export default function LoginClient() {
 
             <Button
               className="mt-2 w-full gap-1.5"
-              disabled={!canSubmit || loginMutation.isPending}
+              disabled={!canSubmit || loginMutation.isPending || !isOnline}
               onClick={handleSubmit}
             >
               {loginMutation.isPending && <Spinner />}

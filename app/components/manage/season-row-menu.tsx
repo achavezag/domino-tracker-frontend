@@ -15,6 +15,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { MoreVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import SeasonDialog from './season-dialog';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 type Props = {
   season: Season;
@@ -30,6 +31,7 @@ export default function SeasonRowMenu({
   seasonMatchesLoading = false,
 }: Props) {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -91,7 +93,13 @@ export default function SeasonRowMenu({
         pendingLabel="Eliminando..."
         variant="destructive"
         isPending={deleteMutation.isPending}
-        onConfirm={() => deleteMutation.mutate()}
+        onConfirm={() => {
+          if (!isOnline) {
+            toast.error("No hay conexión. Esta acción requiere internet.");
+            return;
+          }
+          deleteMutation.mutate();
+        }}
       />
     </>
   );

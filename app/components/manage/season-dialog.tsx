@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
 import { addDaysToDate, toDateOnly } from '@/lib/helpers';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 const FAR_FUTURE = "9999-12-31";
 
@@ -50,6 +51,7 @@ export default function SeasonDialog({
   seasonMatches = [],
 }: Props) {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
 
   const sortedSeasons = useMemo(
     () =>
@@ -152,6 +154,11 @@ export default function SeasonDialog({
   const handleSubmit = () => {
     if (!canSubmit) return;
 
+    if (!isOnline) {
+      toast.error("No hay conexión. Esta acción requiere internet.");
+      return;
+    }
+
     const payload = { startDate, endDate: endDate || null };
 
     if (mode === "create") {
@@ -227,7 +234,7 @@ export default function SeasonDialog({
 
           <Button
             className="gap-1.5"
-            disabled={!canSubmit || isPending}
+            disabled={!canSubmit || isPending || !isOnline}
             onClick={handleSubmit}
           >
             {isPending && <Spinner />}
